@@ -33,6 +33,11 @@ from .mStructureTypes import *;
 
 from .cDLL import cDLL;
 
+from foLoadAdvAPI32DLL import foLoadAdvAPI32DLL;
+from foLoadDbgHelpDLL import foLoadDbgHelpDLL;
+from foLoadKernel32DLL import foLoadKernel32DLL;
+from foLoadNTDLL import foLoadNTDLL;
+
 all = [
   "cBufferType",
   "cCharacterType",
@@ -55,16 +60,13 @@ all = [
   "HRESULT_FROM_WIN32",
   "WIN32_FROM_HRESULT",
   "cDLL",
+  "foLoadAdvAPI32DLL",
+  "foLoadDbgHelpDLL",
+  "foLoadKernel32DLL",
+  "foLoadNTDLL",
 ];
-import  mWindowsDefines;
-for sName in dir(mWindowsDefines):
-  if sName[0] != "_": all.append(sName);
-import  mErrorDefines;
-for sName in dir(mErrorDefines):
-  if sName[0] != "_": all.append(sName);
-import  mPrimitiveTypes;
-for sName in dir(mPrimitiveTypes):
-  if sName[0] != "_": all.append(sName);
-import  mStructureTypes;
-for sName in dir(mStructureTypes):
-  if sName[0] != "_": all.append(sName);
+
+import  mWindowsDefines, mErrorDefines, mPrimitiveTypes, mStructureTypes;
+for mModule in (mWindowsDefines, mErrorDefines, mPrimitiveTypes, mStructureTypes):
+  for sName in dir(mModule):
+    if sName[0] != "_": all.append(sName);

@@ -63,17 +63,15 @@ gtsValidDefinitionElementNames = ("xReturnType", "txArgumentTypes", "bSingleThre
 class cDLL(object):
   def __init__(oSelf, sDLLFilePath, dxFunctions):
     oSelf.__sDLLFilePath = sDLLFilePath;
-    oSelf.__class__.fAddFunctions(oSelf, dxFunctions);
+    oSelf.__oWinDLL = ctypes.WinDLL(sDLLFilePath);
+    oSelf.fAddFunctions(dxFunctions);
   
-  @staticmethod
   def fAddFunctions(oSelf, dxFunctions):
     for (sFunctionName, dxDefinitionElements) in dxFunctions.items():
-      oSelf.__class__.fAddFunction(oSelf, sFunctionName, dxDefinitionElements);
+      oSelf.fAddFunction(sFunctionName, dxDefinitionElements);
   
-  @staticmethod
   def fAddFunction(oSelf, sFunctionName, dxDefinitionElements = {}):
     sDLLFileName = os.path.basename(oSelf.__sDLLFilePath);
-    oWinDLL = ctypes.WinDLL(oSelf.__sDLLFilePath);
     for sDefinitionElementName in dxDefinitionElements:
       if (sDefinitionElementName not in gtsValidDefinitionElementNames):
         raise AssertionError(
@@ -87,7 +85,7 @@ class cDLL(object):
     bSingleThreaded = dxDefinitionElements.get("bSingleThreaded", False);
     oDLLFunction = cDLLFunction(
       sDLLFileName,
-      oWinDLL,
+      oSelf.__oWinDLL,
       xReturnType,
       sFunctionName,
       txArgumentTypes,
@@ -95,5 +93,5 @@ class cDLL(object):
     );
     setattr(oSelf, sFunctionName, oDLLFunction);
   
-  def __str__(oSelf):
-    return "<cDLL(%s)>" % os.path.basename(sDLLFilePath);
+  def __repr__(oSelf):
+    return "<cDLL %s>" % os.path.basename(sDLLFilePath);
