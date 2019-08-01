@@ -1,0 +1,15 @@
+{
+  "asDependentOnProductNames": [], 
+  "oProductVersion": "2019-07-30 12:34", 
+  "oRepository": {
+    "sBranch": "master", 
+    "sRepositoryName": "mWindowsSDK", 
+    "sType": "GitHub", 
+    "sUserName": "SkyLined"
+  }, 
+  "oTrialPeriodDuration": null, 
+  "sLicenseServerURL": null, 
+  "sProductAuthor": "SkyLined", 
+  "sProductName": "mWindowsSDK", 
+  "sProductURL": "https://github.com/SkyLined/mWindowsSDK"
+}
