@@ -26,7 +26,7 @@ def foCreateBuffer(sData_or_uSize, uSize = None, bUnicode = False):
   assert uSize % uElementSize == 0, \
       "Cannot create a buffer with size %s to store elements of size %s" % (repr(uSize), repr(uElementSize));
   # Optionally add padding to data to initialize entire buffer.
-  uLength = (uSize / uElementSize);
+  uLength = uSize / uElementSize;
   sData += "\0" * (uLength - len(sData));
   dcBufferType_by_uSize = gddcBufferType_by_uSize_by_cElementType.setdefault(cElementType, {})
   cCachedBufferType = dcBufferType_by_uSize.get(uSize, None);
@@ -35,7 +35,7 @@ def foCreateBuffer(sData_or_uSize, uSize = None, bUnicode = False):
     cBaseType = cElementType * uLength;
     cCachedBufferType = type(sName, (cBufferType, cBaseType), {
       "sName": sName,
-      "_length_": uLength,
+      "_length_": int(uLength),
       "_type_": cElementType,
     });
     dcBufferType_by_uSize[uSize] = cCachedBufferType;
