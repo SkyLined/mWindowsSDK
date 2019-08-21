@@ -66,7 +66,7 @@ all = [
   "foLoadNTDLL",
 ];
 
-import  mWindowsDefines, mErrorDefines, mPrimitiveTypes, mStructureTypes;
+import mWindowsDefines, mErrorDefines, mPrimitiveTypes, mStructureTypes;
 for mModule in (mWindowsDefines, mErrorDefines, mPrimitiveTypes, mStructureTypes):
   for sName in dir(mModule):
     if sName[0] != "_": all.append(sName);
