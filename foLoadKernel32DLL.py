@@ -338,20 +338,14 @@ def foLoadKernel32DLL():
           "xReturnType": BOOL,
           "txArgumentTypes": (HANDLE, PCONTEXT64 if bIs64Bit else PCONTEXT32),
         },
+        "Wow64GetThreadContext": {
+          "xReturnType": BOOL,
+          "txArgumentTypes": (HANDLE, P64CONTEXT32),
+        },
+        "Wow64SetThreadContext": {
+          "xReturnType": BOOL,
+          "txArgumentTypes": (HANDLE, P64CONTEXT32),
+        },
       }
     );
-
-    if bIs64Bit:
-      goKernel32DLL.fAddFunctions(
-        {
-          "Wow64GetThreadContext": {
-            "xReturnType": BOOL,
-            "txArgumentTypes": (HANDLE, P64CONTEXT32),
-          },
-          "Wow64SetThreadContext": {
-            "xReturnType": BOOL,
-            "txArgumentTypes": (HANDLE, P64CONTEXT32),
-          },
-        }
-      );
   return goKernel32DLL;
