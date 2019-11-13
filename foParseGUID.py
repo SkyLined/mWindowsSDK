@@ -1,6 +1,8 @@
 import re;
+
 from .mPrimitiveTypes import *;
 from .mStructureTypes import *;
+
 rGUID = re.compile((
   r"^\{"
   r"([0-9a-f]{8})" r"\-"
@@ -21,4 +23,3 @@ def foParseGUID(sGUID):
     long(sData3, 16),
     (BYTE * 8)(*[long(sData4[uIndex:uIndex+2], 16) for uIndex in xrange(0, len(sData4), 2)])
     );
-__all__ = [];

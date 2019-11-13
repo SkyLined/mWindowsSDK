@@ -1,5 +1,6 @@
 from .foParseGUID import foParseGUID;
 
+__all__ = [];
 for (sName, sGUID) in {
   "CATID_ActiveScript":                       "{F0B7A1A1-9847-11cf-8F20-00805F2CD064}",
   "CATID_ActiveScriptParse":                  "{F0B7A1A2-9847-11cf-8F20-00805F2CD064}",
