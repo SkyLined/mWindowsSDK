@@ -34,6 +34,14 @@ def fExportStructure64(sName, *atxFields):
 def fDefineUnion(sName, *atxFields):
   fExportStructureOrUnion(fcTypeDefUnion, sName, *atxFields);
 
+def fExportAlias(sName, cType):
+  globals()[sName] = cType; # Make it available in the context of this file
+  __all__.append(sName); # Make it available as an export from this module.
+def fExportPointer(sName, cTargetType):
+  cType = fcCreatePointerType(cTargetType);
+  globals()[sName] = cType; # Make it available in the context of this file
+  __all__.append(sName); # Make it available as an export from this module.
+
 ################################################################################
 # Simple structures that contain only primitives and no other structures are   #
 # defined first, strcutures that contain other structures must wait until      #
@@ -44,22 +52,22 @@ def fDefineUnion(sName, *atxFields):
 fExportStructure32("UNICODE_STRING32",
   (USHORT,      "Length"),
   (USHORT,      "MaximumLength"),
-  (P32WSTR,    "Buffer"),
+  (P32WSTR,     "Buffer"),
 );
 fExportStructure64("UNICODE_STRING64",
   (USHORT,      "Length"),
   (USHORT,      "MaximumLength"),
-  (P64WSTR,    "Buffer"),
+  (P64WSTR,     "Buffer"),
 );
 
 #CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 fExportStructure32("CLIENT_ID32",
-  (P32VOID,    "UniqueProcess"),
-  (P32VOID,    "UniqueThread"),
+  (P32VOID,     "UniqueProcess"),
+  (P32VOID,     "UniqueThread"),
 );
 fExportStructure32("CLIENT_ID64",
-  (P64VOID,    "UniqueProcess"),
-  (P64VOID,    "UniqueThread"),
+  (P64VOID,     "UniqueProcess"),
+  (P64VOID,     "UniqueThread"),
 );
 fExportStructure("COORD", 
   (SHORT,       "X"),
@@ -67,26 +75,38 @@ fExportStructure("COORD",
 );
 fExportStructure32("CURDIR32",
   (UNICODE_STRING32, "DosPath"),
-  (HANDLE32,   "Handle"),
+  (HANDLE32,    "Handle"),
 );
 fExportStructure64("CURDIR64",
   (UNICODE_STRING64, "DosPath"),
-  (HANDLE64,   "Handle"),
+  (HANDLE64,    "Handle"),
 );
 #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 fExportStructure32("EXCEPTION_REGISTRATION_RECORD32",
-  (P32VOID,    "Next"), # Should be EXCEPTION_REGISTRATION_RECORD32
-  (P32VOID,    "Handler"), # Should be PEXCEPTION_ROUTINE32
+  (P32VOID,     "Next"), # Should be EXCEPTION_REGISTRATION_RECORD32
+  (P32VOID,     "Handler"), # Should be PEXCEPTION_ROUTINE32
 );
 fExportStructure64("EXCEPTION_REGISTRATION_RECORD64",
-  (P64VOID,    "Next"), # Should be EXCEPTION_REGISTRATION_RECORD64
-  (P64VOID,    "Handler"), # Should be PEXCEPTION_ROUTINE64
+  (P64VOID,     "Next"), # Should be EXCEPTION_REGISTRATION_RECORD64
+  (P64VOID,     "Handler"), # Should be PEXCEPTION_ROUTINE64
 );
 #FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 fExportStructure("FILETIME",
   (DWORD,       "dwLowDateTime"),
   (DWORD,       "dwHighDateTime"),
 );
+#GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+fExportStructure("GUID",
+  (DWORD,       "Data1"),
+  (WORD,        "Data2"),
+  (WORD,        "Data3"),
+  (BYTE * 8,    "Data4"),
+);
+fExportPointer("REFGUID", GUID);
+fExportAlias("CLSID", GUID);
+fExportPointer("REFCLSID", CLSID);
+fExportAlias("IID", GUID);
+fExportPointer("REFIID", IID);
 #IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 fExportStructure("IMAGE_DATA_DIRECTORY",
   (DWORD,       "VirtualAddress"),

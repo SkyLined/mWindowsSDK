@@ -12,6 +12,8 @@ from .fcCreatePointerType import fcCreatePointerType;
 
 from .foCreateBuffer import foCreateBuffer;
 
+from .foParseGUID import foParseGUID;
+
 from .STRUCT import STRUCT;
 from .UNION import UNION;
 from .fcTypeDefStructure import fcTypeDefStructure;
@@ -30,6 +32,7 @@ from .mWindowsDefines import *;
 from .mErrorDefines import *;
 from .mPrimitiveTypes import *;
 from .mStructureTypes import *;
+from .mGUIDs import *;
 
 from .cDLL import cDLL;
 
@@ -53,6 +56,7 @@ all = [
   "fcTypeDefStructure32",
   "fcTypeDefStructure64",
   "fcTypeDefUnion",
+  "foParseGUID",
   "FAILED",
   "SUCCEEDED",
   "NT_SUCCESS",
@@ -66,7 +70,7 @@ all = [
   "foLoadNTDLL",
 ];
 
-import mWindowsDefines, mErrorDefines, mPrimitiveTypes, mStructureTypes;
-for mModule in (mWindowsDefines, mErrorDefines, mPrimitiveTypes, mStructureTypes):
+import mWindowsDefines, mErrorDefines, mPrimitiveTypes, mStructureTypes, mGUIDs;
+for mModule in (mWindowsDefines, mErrorDefines, mPrimitiveTypes, mStructureTypes, mGUIDs):
   for sName in dir(mModule):
     if sName[0] != "_": all.append(sName);
