@@ -36,10 +36,11 @@ from .mGUIDs import *;
 
 from .cDLL import cDLL;
 
-from foLoadAdvAPI32DLL import foLoadAdvAPI32DLL;
-from foLoadDbgHelpDLL import foLoadDbgHelpDLL;
-from foLoadKernel32DLL import foLoadKernel32DLL;
-from foLoadNTDLL import foLoadNTDLL;
+from .foLoadAdvAPI32DLL import foLoadAdvAPI32DLL;
+from .foLoadDbgHelpDLL import foLoadDbgHelpDLL;
+from .foLoadKernel32DLL import foLoadKernel32DLL;
+from .foLoadNTDLL import foLoadNTDLL;
+from .foLoadOle32DLL import foLoadOle32DLL;
 
 all = [
   "cBufferType",
@@ -68,6 +69,7 @@ all = [
   "foLoadDbgHelpDLL",
   "foLoadKernel32DLL",
   "foLoadNTDLL",
+  "foLoadOle32DLL",
 ];
 
 import mWindowsDefines, mErrorDefines, mPrimitiveTypes, mStructureTypes, mGUIDs;
