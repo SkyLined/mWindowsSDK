@@ -7,6 +7,10 @@ def foLoadOle32DLL():
     goOle32DLL = cDLL(
       "Ole32.dll", 
       {
+        "CoCreateInstance": {
+          "xReturnType": HRESULT, 
+          "txArgumentTypes": (REFCLSID, LPUNKNOWN, DWORD, REFIID, LPVOID),
+        },
         "CLSIDFromProgID": {
           "xReturnType": HRESULT, 
           "txArgumentTypes": (LPCOLESTR, LPCLSID),
