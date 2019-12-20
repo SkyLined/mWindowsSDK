@@ -1,4 +1,6 @@
-from mWindowsSDK import *;
+from cDLL import cDLL;
+from mPrimitiveTypes import *;
+from mStructureTypes import *;
 
 goAdvAPI32DLL = None;
 def foLoadAdvAPI32DLL():

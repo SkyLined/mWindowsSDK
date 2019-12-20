@@ -1,4 +1,4 @@
-import os, re, sys, subprocess, threading, time;
+import os, sys;
 sTestsFolderPath = os.path.dirname(os.path.abspath(__file__));
 sMainFolderPath = os.path.dirname(sTestsFolderPath);
 sParentFolderPath = os.path.dirname(sMainFolderPath);
@@ -17,12 +17,14 @@ for sModuleName in sys.modules.keys():
   assert (
     sModuleName in asOriginalModuleNames # This was loaded before cBugId was loaded
     or sModuleName.lstrip("_").split(".", 1)[0] in [
-      "mWindowsSDK", # This was loaded as part of the mWindowsAPI package
+      "mWindowsSDK", # This was loaded as part of the mWindowsSDK package
       # These built-in modules are loaded by mWindowsSDK:
-      "ctypes", "struct", "platform", "string", "strop",
+      "ctypes", "collections", "gc", "heapq", "itertools", "keyword", "msvcrt",
+      "platform", "string", "strop", "struct", "subprocess", "thread",
+      "threading", "time",
     ]
   ), \
-      "Module %s was unexpectedly loaded outside of the mWindowsAPI package!" % sModuleName;
+      "Module %s was unexpectedly loaded outside of the mWindowsSDK package!" % sModuleName;
 # Restore the search path
 sys.path = asOriginalSysPath;
 

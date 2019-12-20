@@ -1,4 +1,6 @@
-from mWindowsSDK import *;
+from cDLL import cDLL;
+from mPrimitiveTypes import *;
+from mStructureTypes import *;
 
 goNTDLL = None;
 def foLoadNTDLL():

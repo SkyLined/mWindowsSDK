@@ -1,4 +1,3 @@
-import ctypes;
 from .mPrimitiveTypes import CHAR, WCHAR;
 from .cBufferType import cBufferType;
 
