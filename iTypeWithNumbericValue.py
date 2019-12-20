@@ -61,8 +61,8 @@ class iTypeWithNumbericValue(iType):
     return oSelf.value % (xOther.value if isinstance(xOther, iTypeWithNumbericValue) else xOther);
   def __rdivmod__(oSelf, xOther):
     return divmod(oSelf.value, (xOther.value if isinstance(xOther, iTypeWithNumbericValue) else xOther));
-  def __rpow__(oSelf, xOther, xModulo):
-    return pow(oSelf.value, (xOther.value if isinstance(xOther, iTypeWithNumbericValue) else xOther), (xModulo.value if isinstance(xModulo, iTypeWithNumbericValue) else xModulo));
+  def __rpow__(oSelf, xOther):
+    return pow(oSelf.value, (xOther.value if isinstance(xOther, iTypeWithNumbericValue) else xOther));
   def __rlshift__(oSelf, xOther):
     return oSelf.value << (xOther.value if isinstance(xOther, iTypeWithNumbericValue) else xOther);
   def __rrshift__(oSelf, xOther):
