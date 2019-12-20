@@ -38,9 +38,7 @@ class cBufferType(iTypeWithNumbericValue):
     elif uLength is not None:
       assert uIndex + uLength <= uBufferLength, \
           "Cannot get %d chars of data%s from a %d char buffer" % (uLength, " at index %d" % uIndex if uIndex else "", uBufferLength);
-      uSize = uLength * uCharSize;
     else:
-      uSize = uBufferSize;
       uLength = uBufferLength;
     
     uAddress = oSelf.fuGetAddress() + uOffset;
