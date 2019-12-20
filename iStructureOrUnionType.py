@@ -14,9 +14,8 @@ def fasDumpStructureOrUnionHelper(uOffset, uDepth, oStructureOrUnion, auBytes):
     uMemberOffset = uOffset + oStructureOrUnion.fuGetOffsetOfMember(sMemberName);
     uMemberSize = ctypes.sizeof(cMemberType);
     sPadding = "  " * uDepth;
-    sValueFormat = "  %4X|%4X|%-23s|%18s|%-40s|%s";
     sHeaderFormat = "  %%4X|%%4X|%-23s|%18s|%%-40s|%%s" % ("", "");
-    sFooterFormat =  "  %4s|%4s|%-23s|%18s|%-40s|%%s" % ("", "", "", "", "");
+    sValueFormat = "  %4X|%4X|%-23s|%18s|%-40s|%s";
     if isinstance(oMember, (cStructureType, cUnionType)):
       sMemberType = " ".join([s for s in [
         "struct" if isinstance(oMember, cStructureType) else "union",
