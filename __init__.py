@@ -28,11 +28,11 @@ from .NT_ERROR import NT_ERROR;
 from .HRESULT_FROM_WIN32 import HRESULT_FROM_WIN32;
 from .WIN32_FROM_HRESULT import WIN32_FROM_HRESULT;
 
-from .mWindowsDefines import *;
-from .mErrorDefines import *;
-from .mPrimitiveTypes import *;
-from .mStructureTypes import *;
-from .mGUIDs import *;
+import mWindowsDefines;
+import mErrorDefines;
+import mPrimitiveTypes;
+import mStructureTypes;
+import mGUIDs;
 
 from .cDLL import cDLL;
 
@@ -42,7 +42,7 @@ from .foLoadKernel32DLL import foLoadKernel32DLL;
 from .foLoadNTDLL import foLoadNTDLL;
 from .foLoadOle32DLL import foLoadOle32DLL;
 
-all = [
+__all__ = [
   "cBufferType",
   "cCharacterType",
   "cIntegerType",
@@ -64,6 +64,11 @@ all = [
   "NT_ERROR",
   "HRESULT_FROM_WIN32",
   "WIN32_FROM_HRESULT",
+  "mWindowsDefines",
+  "mErrorDefines",
+  "mPrimitiveTypes",
+  "mStructureTypes",
+  "mGUIDs",
   "cDLL",
   "foLoadAdvAPI32DLL",
   "foLoadDbgHelpDLL",
@@ -72,7 +77,8 @@ all = [
   "foLoadOle32DLL",
 ];
 
-import mWindowsDefines, mErrorDefines, mPrimitiveTypes, mStructureTypes, mGUIDs;
 for mModule in (mWindowsDefines, mErrorDefines, mPrimitiveTypes, mStructureTypes, mGUIDs):
   for sName in dir(mModule):
-    if sName[0] != "_": all.append(sName);
+    if sName[0] != "_":
+      globals()[sName] = getattr(mModule, sName);
+      __all__.append(sName);
