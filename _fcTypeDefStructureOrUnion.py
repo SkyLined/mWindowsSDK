@@ -8,7 +8,7 @@ guDefaultAlignmentBits = {"32bit": 32, "64bit": 64}[platform.architecture()[0]];
 guNamelessStructureOrUnionsCounter = 0;
 
 def _fcTypeDefStructureOrUnion(cBaseType, sName, axFields, uAlignmentInBits = None):
-  if uAlignmentInBits == None:
+  if uAlignmentInBits is None:
     uAlignmentInBits = guDefaultAlignmentBits;
   else:
     assert uAlignmentInBits in [8, 16, 32, 64], \
