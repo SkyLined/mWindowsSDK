@@ -3,11 +3,17 @@ from .cBufferType import cBufferType;
 
 gddcBufferType_by_uSize_by_cElementType = {};
 
-def foCreateBuffer(sData_or_uSize, uSize = None, bUnicode = False):
-  cElementType = WCHAR if bUnicode else CHAR;
-  uElementSize = cElementType.fuGetSize();
+NOT_PROVIDED = {};
+
+def foCreateBuffer(sData_or_uSize, uSize = None, bUnicode = NOT_PROVIDED):
   if isinstance(sData_or_uSize, (str, unicode)):
     sData = sData_or_uSize;
+    if bUnicode is NOT_PROVIDED:
+      bUnicode = isinstance(sData, unicode);
+    elif not bUnicode and isinstance(sData, unicode):
+      sData = str(sData);
+    cElementType = WCHAR if bUnicode else CHAR;
+    uElementSize = cElementType.fuGetSize();
     if uSize is None:
       uSize = (len(sData) + 1) * uElementSize;
     else:
@@ -21,6 +27,9 @@ def foCreateBuffer(sData_or_uSize, uSize = None, bUnicode = False):
         "Cannot create a buffer from %s" % repr(sData_or_uSize);
     sData = "";
     uSize = sData_or_uSize;
+    if bUnicode is NOT_PROVIDED: bUnicode = False;
+    cElementType = WCHAR if bUnicode else CHAR;
+    uElementSize = cElementType.fuGetSize();
   
   assert uSize % uElementSize == 0, \
       "Cannot create a buffer with size %s to store elements of size %s" % (repr(uSize), repr(uElementSize));
