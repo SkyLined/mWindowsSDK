@@ -281,6 +281,21 @@ STOWED_EXCEPTION_NESTED_TYPE_CLR        = STOWED_EXCEPTION_NESTED_TYPE("CLR1");
 STOWED_EXCEPTION_NESTED_TYPE_LEO        = STOWED_EXCEPTION_NESTED_TYPE("LEO1");
 STOWED_EXCEPTION_NESTED_TYPE_LMAX       = STOWED_EXCEPTION_NESTED_TYPE("LMAX"); # Undocumented, reversed from detected exceptions.
 SYNCHRONIZE                             = 0x00100000;
+# From https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa
+SW_HIDE                                 = 0x00000000;
+SW_SHOWNORMAL                           = 0x00000001;
+SW_SHOWMINIMIZED                        = 0x00000002;
+SW_MAXIMIZE                             = 0x00000003;
+SW_SHOWMAXIMIZED                        = 0x00000003;
+SW_SHOWNOACTIVATE                       = 0x00000004;
+SW_SHOW                                 = 0x00000005;
+SW_MINIMIZE                             = 0x00000006;
+SW_SHOWMINNOACTIVE                      = 0x00000007;
+SW_SHOWNA                               = 0x00000008;
+SW_RESTORE                              = 0x00000009;
+SW_SHOWDEFAULT                          = 0x00000010;
+SW_FORCEMINIMIZE                        = 0x00000011;
+
 #TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 TH32CS_INHERIT                          = 0x80000000;
 TH32CS_SNAPALL                          = 0x0000000F;
