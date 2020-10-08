@@ -42,6 +42,8 @@ from .foLoadKernel32DLL import foLoadKernel32DLL;
 from .foLoadNTDLL import foLoadNTDLL;
 from .foLoadOle32DLL import foLoadOle32DLL;
 
+from .fs0GetErrorDefineName import fs0GetErrorDefineName;
+
 __all__ = [
   "cBufferType",
   "cCharacterType",
@@ -75,6 +77,7 @@ __all__ = [
   "foLoadKernel32DLL",
   "foLoadNTDLL",
   "foLoadOle32DLL",
+  "fs0GetErrorDefineName",
 ];
 
 for mModule in (mWindowsDefines, mErrorDefines, mPrimitiveTypes, mStructureTypes, mGUIDs):
