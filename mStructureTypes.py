@@ -595,7 +595,20 @@ fExportStructure("THREADENTRY32",
   (LONG,        "tpDeltaPri"),
   (DWORD,       "dwFlags"),
 );
-
+#WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+fExportStructure("WINHTTP_AUTOPROXY_OPTIONS",
+  (DWORD,       "dwFlags"),
+  (DWORD,       "dwAutoDetectFlags"),
+  (LPCWSTR,     "lpszAutoConfigUrl"),
+  (LPVOID,      "lpvReserved"),
+  (DWORD,       "dwReserved"),
+  (BOOL,        "fAutoLogonIfChallenged"),
+);
+fExportStructure("WINHTTP_PROXY_INFO",
+  (DWORD,       "dwAccessType"),
+  (LPWSTR,      "lpszProxy"),
+  (LPWSTR,      "lpszProxyBypass"),
+);
 ################################################################################
 # Structures that contain or refer to other structures                         #
 ################################################################################

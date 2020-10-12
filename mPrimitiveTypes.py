@@ -83,6 +83,7 @@ dcType_by_sName = {
   "HHOOK": cPV,
   "HICON": cPV,
   "HINSTANCE": cPV,
+  "HINTERNET": cPV,
   "HKEY": cPV,
   "HKL": cPV,
   "HLOCAL": cPV,
