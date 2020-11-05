@@ -11,7 +11,7 @@ def foLoadWinHTTPDLL():
       {
         "WinHttpGetProxyForUrl": {
           "xReturnType": BOOL,
-          "txArgumentTypes": (HINTERNET, LPCWSTR, WINHTTP_AUTOPROXY_OPTIONS, WINHTTP_PROXY_INFO),
+          "txArgumentTypes": (HINTERNET, LPCWSTR, PWINHTTP_AUTOPROXY_OPTIONS, PWINHTTP_PROXY_INFO),
         },
         "WinHttpOpen": {
           "xReturnType": HINTERNET,
