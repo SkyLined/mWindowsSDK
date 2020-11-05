@@ -2,6 +2,7 @@ from .iType import iType;
 from .cBufferType import cBufferType;
 from .cIntegerType import cIntegerType;
 from .cCharacterType import cCharacterType;
+from .fsGetStringAtAddress import fsGetStringAtAddress;
 
 class cPointerType(cIntegerType):
   oObjectThatMustNotBeFreed = None;
@@ -38,7 +39,12 @@ class cPointerType(cIntegerType):
     );
   def fcGetTargetType(oSelf):
     return oSelf.__class__.cTargetType;
-
+  
+  def fsGetString(oSelf):
+    assert issubclass(oSelf.__class__.cTargetType, cCharacterType), \
+        "Cannot get a string for a pointer to %s" % repr(oSelf.__class__.cTargetType);
+    return fsGetStringAtAddress(oSelf.value, bUnicode = oSelf.__class__.cTargetType.fuGetSize() == 2);
+  
   def foCastTo(oSelf, cNewType):
     # Cast the pointer and copy oTarget to make the new pointer strong if needed and prevent use-after-free:
     oNew = super(cPointerType, oSelf).foCastTo(cNewType);
