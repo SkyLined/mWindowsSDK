@@ -715,6 +715,17 @@ fExportStructure("TOKEN_MANDATORY_LABEL",
   (SID_AND_ATTRIBUTES, "Label"),
 );
 
+#WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+fExportStructure("WINDOWPLACEMENT",
+  (UINT,  "length"),
+  (UINT,  "flags"),
+  (UINT,  "showCmd"),
+  (POINT, "ptMinPosition"),
+  (POINT, "ptMaxPosition"),
+  (RECT,  "rcNormalPosition"),
+  (RECT,  "rcDevice"),
+);
+
 ################################################################################
 # Structures that contain or refer to other structures which in turn refer to  #
 # other structures as well                                                     #
