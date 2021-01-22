@@ -91,6 +91,9 @@ def foLoadKernel32DLL():
           "xReturnType": BOOL,
           "txArgumentTypes": (HANDLE, PCONSOLE_SCREEN_BUFFER_INFO),
         },
+        "GetConsoleWindow": {
+          "xReturnType": HWND,
+        },
         "GetCurrentProcess": {
           "xReturnType": HANDLE,
         },
