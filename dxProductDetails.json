@@ -1,4 +1,6 @@
 {
+  "asProductTypes": ["Python module"],
+  "sPythonModuleName": "mWindowsSDK",
   "asDependentOnProductNames": [], 
   "asOptionalProductNames": [], 
   "oProductVersion": "2020-06-17 15:53", 
