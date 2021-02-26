@@ -1,5 +1,25 @@
 import ctypes, struct;
 
+# I've started to group some defines that have unique values within a certain
+# context and store them in dictionaries in separate files for clarity.
+# These dictionaries are imported here and their names and values extracted:
+from dsHResultDefineName_by_uValue import dsHResultDefineName_by_uValue;
+from dsExceptionDefineName_by_uValue import dsExceptionDefineName_by_uValue;
+from dsNTStatusDefineName_by_uValue import dsNTStatusDefineName_by_uValue;
+from dsWin32ErrorCodeDefineName_by_uValue import dsWin32ErrorCodeDefineName_by_uValue;
+
+dxGlobals = globals();
+for dsDefineName_by_uValue in (
+  dsHResultDefineName_by_uValue,
+  dsExceptionDefineName_by_uValue,
+  dsNTStatusDefineName_by_uValue,
+  dsWin32ErrorCodeDefineName_by_uValue,
+):
+  for (uValue, sName) in dsDefineName_by_uValue.items():
+    assert dxGlobals.get(sName) in (uValue, None), \
+        "#define %s 0x%X *and* 0x%X!?" % (sName, uValue, duDefineValue_by_sName[sName]);
+    dxGlobals[sName] = uValue;
+
 ################################################################################
 # Non-numeric defines
 ################################################################################
@@ -14,6 +34,9 @@ TRUE = True;
 #AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 ACCESS_SYSTEM_SECURITY                  = 0x01000000;
 #CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCHDEVICENAME                           =         32;
+CCHFORMNAME                             =         32;
+CLR_EXCEPTION_CODE                      = 0xE0434F4D;
 CLSCTX_INPROC_SERVER                    =        0x1;
 CLSCTX_INPROC_HANDLER                   =        0x2;
 CLSCTX_LOCAL_SERVER                     =        0x4;
@@ -67,11 +90,16 @@ DEBUG_ONLY_THIS_PROCESS                 = 0x00000002;
 DEBUG_PROCESS                           = 0x00000001;
 DELETE                                  = 0x00010000;
 DETACHED_PROCESS                        = 0x00000008;
+DMDO_DEFAULT                            = 0x00000000;
+DMDO_90                                 = 0x00000001;
+DMDO_180                                = 0x00000002;
+DMDO_270                                = 0x00000003;
 DUPLICATE_CLOSE_SOURCE                  = 0x00000001;
 DUPLICATE_SAME_ACCESS                   = 0x00000002;
 #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 EXTENDED_STARTUPINFO_PRESENT            = 0x00080000;
 #FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FACILITY_NT_BIT                         = 0x10000000;
 FAST_FAIL_LEGACY_GS_VIOLATION           =          0;
 FAST_FAIL_VTGUARD_CHECK_FAILURE         =          1;
 FAST_FAIL_STACK_COOKIE_CHECK_FAILURE    =          2;
@@ -320,6 +348,141 @@ STARTF_USEPOSITION                      = 0x00000004;
 STARTF_USESHOWWINDOW                    = 0x00000001;
 STARTF_USESIZE                          = 0x00000002;
 STARTF_USESTDHANDLES                    = 0x00000100;
+STATUS_WAIT_0                           = 0x00000000;
+STATUS_WAIT_1                           = 0x00000001;
+STATUS_WAIT_2                           = 0x00000002;
+STATUS_WAIT_3                           = 0x00000003;
+STATUS_WAIT_4                           = 0x00000004;
+STATUS_WAIT_5                           = 0x00000005;
+STATUS_WAIT_6                           = 0x00000006;
+STATUS_WAIT_7                           = 0x00000007;
+STATUS_WAIT_8                           = 0x00000008;
+STATUS_WAIT_9                           = 0x00000009;
+STATUS_WAIT_10                          = 0x0000000A;
+STATUS_WAIT_11                          = 0x0000000B;
+STATUS_WAIT_12                          = 0x0000000C;
+STATUS_WAIT_13                          = 0x0000000D;
+STATUS_WAIT_14                          = 0x0000000E;
+STATUS_WAIT_15                          = 0x0000000F;
+STATUS_WAIT_16                          = 0x00000010;
+STATUS_WAIT_17                          = 0x00000011;
+STATUS_WAIT_18                          = 0x00000012;
+STATUS_WAIT_19                          = 0x00000013;
+STATUS_WAIT_20                          = 0x00000014;
+STATUS_WAIT_21                          = 0x00000015;
+STATUS_WAIT_22                          = 0x00000016;
+STATUS_WAIT_23                          = 0x00000017;
+STATUS_WAIT_24                          = 0x00000018;
+STATUS_WAIT_25                          = 0x00000019;
+STATUS_WAIT_26                          = 0x0000001A;
+STATUS_WAIT_27                          = 0x0000001B;
+STATUS_WAIT_28                          = 0x0000001C;
+STATUS_WAIT_29                          = 0x0000001D;
+STATUS_WAIT_30                          = 0x0000001E;
+STATUS_WAIT_31                          = 0x0000001F;
+STATUS_WAIT_32                          = 0x00000020;
+STATUS_WAIT_33                          = 0x00000021;
+STATUS_WAIT_34                          = 0x00000022;
+STATUS_WAIT_35                          = 0x00000023;
+STATUS_WAIT_36                          = 0x00000024;
+STATUS_WAIT_37                          = 0x00000025;
+STATUS_WAIT_38                          = 0x00000026;
+STATUS_WAIT_39                          = 0x00000027;
+STATUS_WAIT_40                          = 0x00000028;
+STATUS_WAIT_41                          = 0x00000029;
+STATUS_WAIT_42                          = 0x0000002A;
+STATUS_WAIT_43                          = 0x0000002B;
+STATUS_WAIT_44                          = 0x0000002C;
+STATUS_WAIT_45                          = 0x0000002D;
+STATUS_WAIT_46                          = 0x0000002E;
+STATUS_WAIT_47                          = 0x0000002F;
+STATUS_WAIT_48                          = 0x00000030;
+STATUS_WAIT_49                          = 0x00000031;
+STATUS_WAIT_50                          = 0x00000032;
+STATUS_WAIT_51                          = 0x00000033;
+STATUS_WAIT_52                          = 0x00000034;
+STATUS_WAIT_53                          = 0x00000035;
+STATUS_WAIT_54                          = 0x00000036;
+STATUS_WAIT_55                          = 0x00000037;
+STATUS_WAIT_56                          = 0x00000038;
+STATUS_WAIT_57                          = 0x00000039;
+STATUS_WAIT_58                          = 0x0000003A;
+STATUS_WAIT_59                          = 0x0000003B;
+STATUS_WAIT_60                          = 0x0000003C;
+STATUS_WAIT_61                          = 0x0000003D;
+STATUS_WAIT_62                          = 0x0000003E;
+STATUS_WAIT_63                          = 0x0000003F;
+STATUS_ABANDONED                        = 0x00000080;
+STATUS_ABANDONED_WAIT_0                 = 0x00000080;
+STATUS_ABANDONED_WAIT_1                 = 0x00000081;
+STATUS_ABANDONED_WAIT_2                 = 0x00000082;
+STATUS_ABANDONED_WAIT_3                 = 0x00000083;
+STATUS_ABANDONED_WAIT_4                 = 0x00000084;
+STATUS_ABANDONED_WAIT_5                 = 0x00000085;
+STATUS_ABANDONED_WAIT_6                 = 0x00000086;
+STATUS_ABANDONED_WAIT_7                 = 0x00000087;
+STATUS_ABANDONED_WAIT_8                 = 0x00000088;
+STATUS_ABANDONED_WAIT_9                 = 0x00000089;
+STATUS_ABANDONED_WAIT_10                = 0x0000008A;
+STATUS_ABANDONED_WAIT_11                = 0x0000008B;
+STATUS_ABANDONED_WAIT_12                = 0x0000008C;
+STATUS_ABANDONED_WAIT_13                = 0x0000008D;
+STATUS_ABANDONED_WAIT_14                = 0x0000008E;
+STATUS_ABANDONED_WAIT_15                = 0x0000008F;
+STATUS_ABANDONED_WAIT_16                = 0x00000090;
+STATUS_ABANDONED_WAIT_17                = 0x00000091;
+STATUS_ABANDONED_WAIT_18                = 0x00000092;
+STATUS_ABANDONED_WAIT_19                = 0x00000093;
+STATUS_ABANDONED_WAIT_20                = 0x00000094;
+STATUS_ABANDONED_WAIT_21                = 0x00000095;
+STATUS_ABANDONED_WAIT_22                = 0x00000096;
+STATUS_ABANDONED_WAIT_23                = 0x00000097;
+STATUS_ABANDONED_WAIT_24                = 0x00000098;
+STATUS_ABANDONED_WAIT_25                = 0x00000099;
+STATUS_ABANDONED_WAIT_26                = 0x0000009A;
+STATUS_ABANDONED_WAIT_27                = 0x0000009B;
+STATUS_ABANDONED_WAIT_28                = 0x0000009C;
+STATUS_ABANDONED_WAIT_29                = 0x0000009D;
+STATUS_ABANDONED_WAIT_30                = 0x0000009E;
+STATUS_ABANDONED_WAIT_31                = 0x0000009F;
+STATUS_ABANDONED_WAIT_32                = 0x000000A0;
+STATUS_ABANDONED_WAIT_33                = 0x000000A1;
+STATUS_ABANDONED_WAIT_34                = 0x000000A2;
+STATUS_ABANDONED_WAIT_35                = 0x000000A3;
+STATUS_ABANDONED_WAIT_36                = 0x000000A4;
+STATUS_ABANDONED_WAIT_37                = 0x000000A5;
+STATUS_ABANDONED_WAIT_38                = 0x000000A6;
+STATUS_ABANDONED_WAIT_39                = 0x000000A7;
+STATUS_ABANDONED_WAIT_40                = 0x000000A8;
+STATUS_ABANDONED_WAIT_41                = 0x000000A9;
+STATUS_ABANDONED_WAIT_42                = 0x000000AA;
+STATUS_ABANDONED_WAIT_43                = 0x000000AB;
+STATUS_ABANDONED_WAIT_44                = 0x000000AC;
+STATUS_ABANDONED_WAIT_45                = 0x000000AD;
+STATUS_ABANDONED_WAIT_46                = 0x000000AE;
+STATUS_ABANDONED_WAIT_47                = 0x000000AF;
+STATUS_ABANDONED_WAIT_48                = 0x000000B0;
+STATUS_ABANDONED_WAIT_49                = 0x000000B1;
+STATUS_ABANDONED_WAIT_50                = 0x000000B2;
+STATUS_ABANDONED_WAIT_51                = 0x000000B3;
+STATUS_ABANDONED_WAIT_52                = 0x000000B4;
+STATUS_ABANDONED_WAIT_53                = 0x000000B5;
+STATUS_ABANDONED_WAIT_54                = 0x000000B6;
+STATUS_ABANDONED_WAIT_55                = 0x000000B7;
+STATUS_ABANDONED_WAIT_56                = 0x000000B8;
+STATUS_ABANDONED_WAIT_57                = 0x000000B9;
+STATUS_ABANDONED_WAIT_58                = 0x000000BA;
+STATUS_ABANDONED_WAIT_59                = 0x000000BB;
+STATUS_ABANDONED_WAIT_60                = 0x000000BC;
+STATUS_ABANDONED_WAIT_61                = 0x000000BD;
+STATUS_ABANDONED_WAIT_62                = 0x000000BE;
+STATUS_ABANDONED_WAIT_63                = 0x000000BF;
+# These are defined in dsNTStatusDefineName_by_uValue but since they have the
+# same value, one of them will be overwritten by the other. To make sure both
+# are available, they are defined here as well:
+STATUS_FWP_TOO_MANY_BOOTTIME_FILTERS    = 0xC0220018;
+STATUS_FWP_TOO_MANY_CALLOUTS            = 0xC0220018;
+
 STILL_ACTIVE                            =      0x103;
 STD_ERROR_HANDLE                        =        -12;
 STD_INPUT_HANDLE                        =        -10;

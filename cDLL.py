@@ -1,4 +1,6 @@
-import ctypes, threading, os;
+import ctypes, inspect, threading, os, re;
+
+from .iPrimitiveBaseType import iPrimitiveBaseType;
 
 class cFunctionDoesNotExistException(Exception):
   def __init__(oSelf, sDLLName, sFunctionName):
@@ -19,6 +21,14 @@ class cDLLFunction(object):
     oSelf.xReturnType = xReturnType;
     oSelf.sName = sFunctionName;
     oSelf.txArgumentTypes = txArgumentTypes;
+    for uArgumentIndex in xrange(len(txArgumentTypes)):
+      xArgumentType = txArgumentTypes[uArgumentIndex];
+      assert inspect.isclass(xArgumentType) and issubclass(xArgumentType, iPrimitiveBaseType), (
+        "You are trying to define `%s`, `function %s()` with %s as the type of argument #%d.\n" + \
+        "This is not a primitive type and cannot be used as an argument.\n" + \
+        "Perhaps you forgot to make it a point to this type?"
+      ) % (sDLLName, sFunctionName, repr(xArgumentType), uArgumentIndex);
+    
     oSelf.bSingleThreaded = bSingleThreaded;
     ffxFunctionConstructor = ctypes.WINFUNCTYPE(oSelf.xReturnType, *oSelf.txArgumentTypes);
     try:
@@ -46,14 +56,25 @@ class cDLLFunction(object):
   def __call__(oSelf, *txArguments):
     try:
       xReturnValue = oSelf.__fFunctionWrapper(*txArguments);
-    except ctypes.ArgumentError:
+    except ctypes.ArgumentError as oException:
+      oArgumentNumberMatch = re.match(r"argument (\d+):.*", oException.message);
+      u0WrongArgumentIndex = oArgumentNumberMatch and long(oArgumentNumberMatch.group(1)) - 1;
       print "*" * 80;
-      for uIndex in xrange(len(txArguments)):
-        xArgument = txArguments[uIndex];
-        xExpectedArgumentType = oSelf.txArgumentTypes[uIndex];
-        if xArgument.__class__ != xExpectedArgumentType:
-          print "* Argument %d (%s) is type %s instead of type %s." % \
-                (uIndex + 1, repr(xArgument), repr(xArgument.__class__), repr(xExpectedArgumentType));
+      print "* Invalid arguments passed to %s.%s():" % (oSelf.sDLLName, oSelf.sName);
+      for uArgumentIndex in xrange(len(txArguments)):
+        xArgument = txArguments[uArgumentIndex];
+        xExpectedArgumentType = oSelf.txArgumentTypes[uArgumentIndex];
+        if (
+          xArgument.__class__ != xExpectedArgumentType
+            if u0WrongArgumentIndex is None else
+          uArgumentIndex == u0WrongArgumentIndex
+        ):
+          print "- Argument %d is %s (%s), which %s correct." % \
+              (uArgumentIndex + 1, repr(xArgument.__class__), repr(xArgument), "may not be" if u0WrongArgumentIndex is None else "is not");
+          print "  Expected type = %s." % (repr(xExpectedArgumentType),);
+        else:
+          print "+ Argument %d is %s (%s) as expected." % \
+              (uArgumentIndex + 1, repr(xArgument.__class__), repr(xArgument));
       print "*" * 80;
       raise;
     if oSelf.xReturnType is not None:

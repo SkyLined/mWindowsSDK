@@ -17,6 +17,14 @@ def foLoadUser32DLL():
           "xReturnType": BOOL, 
           "txArgumentTypes": (HWND, PWINDOWPLACEMENT),
         },
+        "EnumDisplayDevicesA": {
+          "xReturnType": BOOL, 
+          "txArgumentTypes": (LPCWSTR, DWORD, PDISPLAY_DEVICEA, DWORD),
+        },
+        "EnumDisplayDevicesW": {
+          "xReturnType": BOOL, 
+          "txArgumentTypes": (LPCWSTR, DWORD, PDISPLAY_DEVICEW, DWORD),
+        },
       },
     );
   return goUser32DLL;

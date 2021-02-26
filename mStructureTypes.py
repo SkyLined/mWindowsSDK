@@ -1,44 +1,43 @@
-import ctypes, platform;
-from .fcCreatePointerType import fcCreatePointerType;
-from .fcTypeDefStructure import fcTypeDefStructure;
-from .fcTypeDefStructure32 import fcTypeDefStructure32;
-from .fcTypeDefStructure64 import fcTypeDefStructure64;
-from .fcTypeDefUnion import fcTypeDefUnion;
+import ctypes;
+from .mPointerBaseTypes import iPointerBaseType32, iPointerBaseType64, iPointerBaseTypeDefault;
+from .mStructureBaseTypes import iStructureBaseType32, iStructureBaseType64, iStructureBaseTypeDefault;
+from .mUnionBaseTypes import iUnionBaseType32, iUnionBaseType64, iUnionBaseTypeDefault;
 from .STRUCT import STRUCT;
 from .UNION import UNION;
-from .mWindowsDefines import *;
+from .mWindowsConstantDefines import *;
 from .mPrimitiveTypes import *;
 
 __all__ = [];
 
 # Export the structure and various types of pointers under common names.
-def fExportStructureOrUnion(fcTypeDef, sName, *atxFields):
-  cType = fcTypeDef(sName, *atxFields);
+def fExportStructureOrUnion(iStructureOrUnionBaseType, sName, *atxFields):
+  cType = iStructureOrUnionBaseType.fcCreateType(sName, *atxFields);
+  cpType = iPointerBaseTypeDefault.fcCreateType(cType);
   for (sName, cType) in {
               sName: cType,
-       "LP" + sName: fcCreatePointerType(cType),
-        "P" + sName: fcCreatePointerType(cType),
-       "PP" + sName: fcCreatePointerType(fcCreatePointerType(cType)),
-      "P32" + sName: fcCreatePointerType(cType, uPointerSizeInBits = 32),
-      "P64" + sName: fcCreatePointerType(cType, uPointerSizeInBits = 64),
+       "LP" + sName: cpType,
+        "P" + sName: cpType,
+       "PP" + sName: iPointerBaseTypeDefault.fcCreateType(cpType),
+      "P32" + sName: iPointerBaseType32.fcCreateType(cType),
+      "P64" + sName: iPointerBaseType64.fcCreateType(cType),
   }.items():
     globals()[sName] = cType; # Make it available in the context of this file
     __all__.append(sName); # Make it available as an export from this module.
 
 def fExportStructure(sName, *atxFields):
-  fExportStructureOrUnion(fcTypeDefStructure, sName, *atxFields);
+  fExportStructureOrUnion(iStructureBaseTypeDefault, sName, *atxFields);
 def fExportStructure32(sName, *atxFields):
-  fExportStructureOrUnion(fcTypeDefStructure32, sName, *atxFields);
+  fExportStructureOrUnion(iStructureBaseType32, sName, *atxFields);
 def fExportStructure64(sName, *atxFields):
-  fExportStructureOrUnion(fcTypeDefStructure64, sName, *atxFields);
+  fExportStructureOrUnion(iStructureBaseType64, sName, *atxFields);
 def fDefineUnion(sName, *atxFields):
-  fExportStructureOrUnion(fcTypeDefUnion, sName, *atxFields);
+  fExportStructureOrUnion(iUnionBaseTypeDefault, sName, *atxFields);
 
 def fExportAlias(sName, cType):
   globals()[sName] = cType; # Make it available in the context of this file
   __all__.append(sName); # Make it available as an export from this module.
 def fExportPointer(sName, cTargetType):
-  cType = fcCreatePointerType(cTargetType);
+  cType = iPointerBaseTypeDefault.fcCreateType(cTargetType);
   globals()[sName] = cType; # Make it available in the context of this file
   __all__.append(sName); # Make it available as an export from this module.
 
@@ -81,6 +80,23 @@ fExportStructure64("CURDIR64",
   (UNICODE_STRING64, "DosPath"),
   (HANDLE64,    "Handle"),
 );
+
+fExportStructure("DISPLAY_DEVICEA",
+  (DWORD,       "cb"),
+  (CHAR[32],    "DeviceName"),
+  (CHAR[128],   "DeviceString"),
+  (DWORD,       "StateFlags"),
+  (CHAR[128],   "DeviceID"),
+  (CHAR[128],   "DeviceKey"),
+);
+fExportStructure("DISPLAY_DEVICEW",
+  (DWORD,       "cb"),
+  (WCHAR[32],   "DeviceName"),
+  (WCHAR[128],  "DeviceString"),
+  (DWORD,       "StateFlags"),
+  (WCHAR[128],  "DeviceID"),
+  (WCHAR[128],  "DeviceKey"),
+);
 #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 fExportStructure32("EXCEPTION_REGISTRATION_RECORD32",
   (P32VOID,     "Next"), # Should be EXCEPTION_REGISTRATION_RECORD32
@@ -100,7 +116,7 @@ fExportStructure("GUID",
   (DWORD,       "Data1"),
   (WORD,        "Data2"),
   (WORD,        "Data3"),
-  (BYTE * 8,    "Data4"),
+  (BYTE[8],     "Data4"),
 );
 fExportPointer("REFGUID", GUID);
 fExportAlias("CLSID", GUID);
@@ -113,7 +129,7 @@ fExportStructure("IMAGE_DATA_DIRECTORY",
   (DWORD,       "Size"),
 );
 fExportStructure("IMAGE_DOS_HEADER",
-  (BYTE * 2,    "e_magic_byte"),  # Magic number
+  (BYTE[2],     "e_magic_byte"),  # Magic number
   (UINT16,      "e_cblp"),        # Bytes on last page of file
   (UINT16,      "e_cp"),          # Pages in file
   (UINT16,      "e_crlc"),        # Relocations
@@ -127,10 +143,10 @@ fExportStructure("IMAGE_DOS_HEADER",
   (UINT16,      "e_cs"),          # Initial (relative) CS value
   (UINT16,      "e_lfarlc"),      # File address of relocation table
   (UINT16,      "e_ovno"),        # Overlay number
-  (UINT16 * 4,  "e_res1"),        # Reserved words
+  (UINT16[4],   "e_res1"),        # Reserved words
   (UINT16,      "e_oemid"),       # OEM identifier (for e_oeminfo)
   (UINT16,      "e_oeminfo"),     # OEM information; e_oemid specific
-  (UINT16 * 10, "e_res2"),        # Reserved words
+  (UINT16[10],  "e_res2"),        # Reserved words
   (INT32,       "e_lfanew"),      # File address of new exe header
 );
 fExportStructure("IMAGE_FILE_HEADER",
@@ -263,6 +279,10 @@ fExportStructure64("LIST_ENTRY64",
   (P64VOID,    "Flink"), # Should be PLIST_ENTRY64 but circular references are not implemented.
   (P64VOID,    "Blink"), # Should be PLIST_ENTRY64 but circular references are not implemented.
 );
+fExportStructure("LUID",
+  (DWORD, "LowPart"),
+  (LONG,  "HighPart"),
+)
 #MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 fExportStructure("M128A",
   (ULONGLONG,    "Low"),
@@ -307,8 +327,8 @@ fExportStructure("MODULEENTRY32A",
   (PBYTE,       "modBaseAddr"),
   (DWORD,       "modBaseSize"),
   (HMODULE,     "hModule"),
-  (CHAR * (MAX_MODULE_NAME32 + 1), "szModule"),
-  (CHAR * MAX_PATH, "szExePath"),
+  (CHAR[MAX_MODULE_NAME32 + 1], "szModule"),
+  (CHAR[MAX_PATH], "szExePath"),
 );
 fExportStructure("MODULEENTRY32W",
   (DWORD,       "dwSize"),
@@ -319,8 +339,8 @@ fExportStructure("MODULEENTRY32W",
   (PBYTE,       "modBaseAddr"),
   (DWORD,       "modBaseSize"),
   (HMODULE,     "hModule"),
-  (WCHAR * (MAX_MODULE_NAME32 + 1), "szModule"),
-  (WCHAR * MAX_PATH, "szExePath"),
+  (WCHAR[MAX_MODULE_NAME32 + 1], "szModule"),
+  (WCHAR[MAX_PATH], "szExePath"),
 );
 #NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 fExportStructure32("NT_TIB32",
@@ -365,14 +385,15 @@ fExportStructure("POINT",
   (LONG,        "x"),
   (LONG,        "y"),
 );
+fExportAlias("POINTL", POINT);
 fExportStructure32("PEB_LDR_DATA32", 
-  (BYTE * 8,    "Reserved1"),
-  (P32VOID * 3, "Reserved2"),
+  (BYTE[8],     "Reserved1"),
+  (P32VOID[3],  "Reserved2"),
   (LIST_ENTRY32, "InMemoryOrderModuleList"),
 );
 fExportStructure64("PEB_LDR_DATA64", 
-  (BYTE * 8,    "Reserved1"),
-  (P64VOID * 3, "Reserved2"),
+  (BYTE[8],     "Reserved1"),
+  (P64VOID[3],  "Reserved2"),
   (LIST_ENTRY64, "InMemoryOrderModuleList"),
 );
 fExportStructure("PROCESS_INFORMATION",
@@ -416,7 +437,7 @@ fExportStructure("PROCESSENTRY32A",
   (DWORD,       "th32ParentProcessID"),
   (LONG,        "pcPriClassBase"),
   (DWORD,       "dwFlags"),
-  (CHAR * MAX_PATH, "szExeFile"),
+  (CHAR[MAX_PATH], "szExeFile"),
 );
 fExportStructure("PROCESSENTRY32W",
   (DWORD,       "dwSize"),
@@ -428,7 +449,7 @@ fExportStructure("PROCESSENTRY32W",
   (DWORD,       "th32ParentProcessID"),
   (LONG,        "pcPriClassBase"),
   (DWORD,       "dwFlags"),
-  (WCHAR * MAX_PATH, "szExeFile"),
+  (WCHAR[MAX_PATH], "szExeFile"),
 );
 #RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
 fExportStructure("RECT",
@@ -748,7 +769,7 @@ fExportStructure64("PEB64",
   (BYTE,        "ReadImageFileExecOptions"),
   (BYTE,        "BeingDebugged"),
   (BYTE,        "BitField"),
-  (BYTE * 4,    "Padding0"),
+  (BYTE[4],     "Padding0"),
   (P64VOID,     "Mutant"),
   (P64VOID,     "ImageBaseAddress"),
   (P64PEB_LDR_DATA64, "Ldr"),
@@ -758,14 +779,14 @@ fExportStructure64("PEB64",
 fExportStructure32("PROCESS_BASIC_INFORMATION32",
   (P32VOID,     "Reserved1"),
   (P32PEB32,    "PebBaseAddress"),
-  (P32VOID * 2, "Reserved2"),
+  (P32VOID[2],  "Reserved2"),
   (P32ULONG,    "UniqueProcessId"),
   (P32VOID,     "Reserved3"),
 );
 fExportStructure64("PROCESS_BASIC_INFORMATION64",
   (P64VOID,     "Reserved1"),
   (P64PEB64,    "PebBaseAddress"),
-  (P64VOID * 2, "Reserved2"),
+  (P64VOID[2],  "Reserved2"),
   (P64ULONG,    "UniqueProcessId"),
   (P64VOID,     "Reserved3"),
 );
@@ -808,7 +829,7 @@ fExportStructure32("FLOATING_SAVE_AREA32",
   (DWORD,       "ErrorSelector"),
   (DWORD,       "DataOffset"),
   (DWORD,       "DataSelector"),
-  (BYTE * 80,   "RegisterArea"),
+  (BYTE[80],    "RegisterArea"),
   (DWORD,       "Cr0NpxState"),
 );
 fExportStructure32("CONTEXT32", 
@@ -836,7 +857,7 @@ fExportStructure32("CONTEXT32",
   (DWORD,       "Eflags"),
   (DWORD,       "Esp"),
   (DWORD,       "SegSs"),
-  (BYTE * 512,  "ExtendedRegisters"),
+  (BYTE[512],   "ExtendedRegisters"),
 );
 
 fExportStructure64("XMM_SAVE_AREA32",
@@ -853,9 +874,9 @@ fExportStructure64("XMM_SAVE_AREA32",
   (WORD,        "Reserved3"),
   (DWORD,       "MxCsr"),
   (DWORD,       "MxCsr_Mask"),
-  (M128A * 8,   "FloatRegisters"),
-  (M128A * 16,  "XmmRegisters"),
-  (BYTE * 96,   "Reserved4"),
+  (M128A[8],     "FloatRegisters"),
+  (M128A[16],    "XmmRegisters"),
+  (BYTE[96],     "Reserved4"),
 );
 
 fExportStructure64("CONTEXT64", 
@@ -900,9 +921,9 @@ fExportStructure64("CONTEXT64",
   UNION( 
     (XMM_SAVE_AREA32, "FltSave"),
     STRUCT(
-      (M128A * 2,       "Header"),
+      (M128A[2],         "Header"),
       UNION(
-        (M128A * 8,       "Legacy"),
+        (M128A[8],         "Legacy"),
         (M128A,           "St0"),
         (M128A,           "St1"),
         (M128A,           "St2"),
@@ -930,7 +951,7 @@ fExportStructure64("CONTEXT64",
       (M128A,           "Xmm15"),
     ),
   ),
-  (M128A * 26,  "VectorRegister"),
+  (M128A[26],    "VectorRegister"),
   (DWORD64,     "VectorControl"),
   (DWORD64,     "DebugControl"),
   (DWORD64,     "LastBranchToRip"),

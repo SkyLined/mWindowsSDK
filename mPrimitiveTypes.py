@@ -1,208 +1,143 @@
-import ctypes, platform;
-from .cCharacterType import cCharacterType;
-from .cIntegerType import cIntegerType;
-from .cFloatType import cFloatType;
-from .fcCreatePointerType import fcCreatePointerType;
+import ctypes;
+from .mCharacterBaseTypes import iCharacterBaseTypeA, iCharacterBaseTypeW;
+from .mIntegerBaseTypes import \
+    iIntegerBaseTypeB, iIntegerBaseTypeI, iIntegerBaseTypeU, \
+    iIntegerBaseTypeB8, iIntegerBaseTypeB16, iIntegerBaseTypeB32, iIntegerBaseTypeB64, iIntegerBaseTypeBDefault, \
+    iIntegerBaseTypeI8, iIntegerBaseTypeI16, iIntegerBaseTypeI32, iIntegerBaseTypeI64, iIntegerBaseTypeIDefault, \
+    iIntegerBaseTypeU8, iIntegerBaseTypeU16, iIntegerBaseTypeU32, iIntegerBaseTypeU64, iIntegerBaseTypeUDefault;
+from .mFloatingPointBaseTypes import iFloatingPointBaseType32, iFloatingPointBaseType64;
+from .mPointerBaseTypes import \
+    iPointerBaseType, iPointerBaseType32, iPointerBaseType64, iPointerBaseTypeDefault, \
+    iVoidPointerType32, iVoidPointerType64, iVoidPointerTypeDefault, \
+    iVoidPointerPointerType32, iVoidPointerPointerType64, iVoidPointerPointerTypeDefault;
+from .uProcessBits import uProcessBits;
 
-uDefaultWordSizeInBits = {"32bit": 32, "64bit": 64}[platform.architecture()[0]];
-
-class cI8(cIntegerType, ctypes.c_byte):
-  pass;
-class cI16(cIntegerType, ctypes.c_short):
-  pass;
-class cI32(cIntegerType, ctypes.c_long):
-  pass;
-class cI64(cIntegerType, ctypes.c_longlong):
-  pass;
-cI = {32: cI32, 64: cI64}[uDefaultWordSizeInBits];
-
-class cU8(cIntegerType, ctypes.c_ubyte):
-  pass;
-class cU16(cIntegerType, ctypes.c_ushort):
-  pass;
-class cU32(cIntegerType, ctypes.c_ulong):
-  pass;
-class cU64(cIntegerType, ctypes.c_ulonglong):
-  pass;
-cU = {32: cU32, 64: cU64}[uDefaultWordSizeInBits];
-
-class cF32(cFloatType, ctypes.c_float):
-  pass;
-class cF64(cFloatType, ctypes.c_double):
-  pass;
-
-class cChar(cCharacterType, ctypes.c_char):
-  bUnicode = False;
-class cWChar(cCharacterType, ctypes.c_wchar):
-  bUnicode = True;
-
-cPV = fcCreatePointerType();
-cP32V = fcCreatePointerType(uPointerSizeInBits = 32);
-cP64V = fcCreatePointerType(uPointerSizeInBits = 64);
-cPPV = fcCreatePointerType(cPV);
-cPP32V = fcCreatePointerType(cP32V, uPointerSizeInBits = 32);
-cPP64V = fcCreatePointerType(cP64V, uPointerSizeInBits = 64);
-
-# We want a list of the names of the primitive types defined below so we can
-# automatically generate pointer-to-types for them. We will do this by getting
-# a list of the names of all globals now and after they have been defined, so
-# we can determine what globals were added.
-asGlobalsBeforeTypeDefinitions = globals().keys() + ["asGlobalsBeforeTypeDefinitions"];
-
-dcType_by_sName = {
+di0BaseType_by_sName = {
   #AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-  "ASTR": cChar, # Used to create LPASTR etc.
+  "ASTR":     iCharacterBaseTypeA, # Used to create LPASTR etc.
   #BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-  "BOOL": cU32,
-  "BOOLEAN": cU8,
-  "BYTE": cU8,
+  "BOOL":     iIntegerBaseTypeB32,
+  "BOOLEAN":  iIntegerBaseTypeB8,
+  "BYTE":     iIntegerBaseTypeU8,
   #CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-  "CHAR": cChar,
-  "COLESTR": cWChar, # Used to create LPCOLESTR etc.
-  "CSTR": cChar, # Used to create LPCSTR etc.
-  "CVOID": None, # Used to create LPCVOID etc.
-  "CWSTR": cWChar, # Used to create LPCWSTR etc.
+  "CHAR":     iCharacterBaseTypeA,
+  "COLESTR":  iCharacterBaseTypeW, # Used to create LPCOLESTR etc.
+  "CSTR":     iCharacterBaseTypeA, # Used to create LPCSTR etc.
+  "CVOID":    None, # Used to create LPCVOID etc.
+  "CWSTR":    iCharacterBaseTypeW, # Used to create LPCWSTR etc.
   #DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
-  "DWORD": cU32,
-  "DWORD64": cU64,
+  "DWORD":    iIntegerBaseTypeU32,
+  "DWORD_PTR": iIntegerBaseTypeIDefault,
+  "DWORD64":  iIntegerBaseTypeU64,
   #FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-  "FLOAT": cF32,
+  "FLOAT":    iFloatingPointBaseType32,
   #HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-  "HACCEL": cPV,
-  "HANDLE": cPV,
-  "HBITMAP": cPV,
-  "HBRUSH": cPV,
-  "HCOLORSPACE": cPV,
-  "HDC": cPV,
-  "HDESK": cPV,
-  "HDWP": cPV,
-  "HENHMETAFILE": cPV,
-  "HFONT": cPV,
-  "HGDIOBJ": cPV,
-  "HGLOBAL": cPV,
-  "HHOOK": cPV,
-  "HICON": cPV,
-  "HINSTANCE": cPV,
-  "HINTERNET": cPV,
-  "HKEY": cPV,
-  "HKL": cPV,
-  "HLOCAL": cPV,
-  "HMENU": cPV,
-  "HMETAFILE": cPV,
-  "HMODULE": cPV,
-  "HMONITOR": cPV,
-  "HPALETTE": cPV,
-  "HPEN": cPV,
-  "HRESULT": cU32, # Officially "LONG" but effectively unsigned
-  "HRGN": cPV,
-  "HRSRC": cPV,
-  "HSTR": cPV,
-  "HTASK": cPV,
-  "HWINSTA": cPV,
-  "HWND": cPV,
+  "HACCEL":   iVoidPointerTypeDefault,
+  "HANDLE":   iVoidPointerTypeDefault,
+  "HBITMAP":  iVoidPointerTypeDefault,
+  "HBRUSH":   iVoidPointerTypeDefault,
+  "HCOLORSPACE": iVoidPointerTypeDefault,
+  "HDESK":    iVoidPointerTypeDefault,
+  "HDWP":     iVoidPointerTypeDefault,
+  "HENHMETAFILE": iVoidPointerTypeDefault,
+  "HFONT":    iVoidPointerTypeDefault,
+  "HGDIOBJ":  iVoidPointerTypeDefault,
+  "HGLOBAL":  iVoidPointerTypeDefault,
+  "HHOOK":    iVoidPointerTypeDefault,
+  "HICON":    iVoidPointerTypeDefault,
+  "HINSTANCE": iVoidPointerTypeDefault,
+  "HINTERNET": iVoidPointerTypeDefault,
+  "HKEY":     iVoidPointerTypeDefault,
+  "HKL":      iVoidPointerTypeDefault,
+  "HLOCAL":   iVoidPointerTypeDefault,
+  "HMENU":    iVoidPointerTypeDefault,
+  "HMETAFILE": iVoidPointerTypeDefault,
+  "HMODULE":  iVoidPointerTypeDefault,
+  "HMONITOR": iVoidPointerTypeDefault,
+  "HPALETTE": iVoidPointerTypeDefault,
+  "HPEN":     iVoidPointerTypeDefault,
+  "HRESULT":  iIntegerBaseTypeU32, # Officially "LONG" but effectively unsigned
+  "HRGN":     iVoidPointerTypeDefault,
+  "HRSRC":    iVoidPointerTypeDefault,
+  "HSTR":     iVoidPointerTypeDefault,
+  "HTASK":    iVoidPointerTypeDefault,
+  "HWINSTA":  iVoidPointerTypeDefault,
+  "HWND":     iVoidPointerTypeDefault,
   #IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-  "INT": cI32,
-  "INT8": cI8,
-  "INT16": cI16,
-  "INT32": cI32,
-  "INT64": cI64,
+  "INT":      iIntegerBaseTypeI32,
+  "INT_PTR":  iIntegerBaseTypeIDefault,
+  "INT8":     iIntegerBaseTypeI8,
+  "INT16":    iIntegerBaseTypeI16,
+  "INT32":    iIntegerBaseTypeI32,
+  "INT64":    iIntegerBaseTypeI64,
   #JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ
-  "JOBOBJECTINFOCLASS": cU, # defined as an enum, so I'm guessing its size depends on the architecture.
+  "JOBOBJECTINFOCLASS": iIntegerBaseTypeUDefault, # defined as an enum, so I'm guessing its size depends on the architecture.
   #LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
-  "LONG": cI32,
-  "LONGLONG": cI64,
+  "LONG":     iIntegerBaseTypeI32,
+  "LONG_PTR": iIntegerBaseTypeIDefault,
+  "LONGLONG": iIntegerBaseTypeI64,
   "THREAD_START_ROUTINE": None, # Used to create LPTHREAD_START_ROUTINE etc.
   #NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-  "NTSTATUS": cI32,
+  "NTSTATUS": iIntegerBaseTypeI32,
   #OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-  "OLESTR": cWChar, # Used to create LPOLESTR etc.
+  "OLESTR":   iCharacterBaseTypeW, # Used to create LPOLESTR etc.
   #PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
-  "PROCESSINFOCLASS": cU, # defined as an enum, so I'm guessing its size depends on the architecture.
+  "PROCESSINFOCLASS": iIntegerBaseTypeUDefault, # defined as an enum, so I'm guessing its size depends on the architecture.
+  "POINTER_32": iVoidPointerType32,
+  "POINTER_64": iVoidPointerType64,
   #SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
-  "SHORT": cI16,
-  "SIZE_T": cU,
-  "SIZE_T32": cU32,
-  "SIZE_T64": cU64,
-  "STR": cChar, # Used to create LPSTR etc.
+  "SHORT":    iIntegerBaseTypeI16,
+  "SIZE_T":   iIntegerBaseTypeUDefault,
+  "SIZE_T32": iIntegerBaseTypeU32,
+  "SIZE_T64": iIntegerBaseTypeU64,
+  "STR":      iCharacterBaseTypeA, # Used to create LPSTR etc.
   #TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-  "THREADINFOCLASS": cU, # defined as an enum, so I'm guessing its size depends on the architecture.
-  "TOKEN_INFORMATION_CLASS": cU32,
+  "THREADINFOCLASS": iIntegerBaseTypeUDefault, # defined as an enum, so I'm guessing its size depends on the architecture.
+  "TOKEN_INFORMATION_CLASS": iIntegerBaseTypeU32,
   #UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
-  "UCHAR": cU8,
-  "UINT": cU32,
-  "UINT8": cU8,
-  "UINT16": cU16,
-  "UINT32": cU32,
-  "UINT64": cU64,
-  "ULONG": cU32,
-  "ULONGLONG": cU64,
-  "UNKNOWN": None, # Used to create LPUNKNOWN (Which should be IUknown*)
-  "USHORT": cU16,
+  "UCHAR":    iIntegerBaseTypeU8,
+  "UINT":     iIntegerBaseTypeU32,
+  "UINT8":    iIntegerBaseTypeU8,
+  "UINT16":   iIntegerBaseTypeU16,
+  "UINT32":   iIntegerBaseTypeU32,
+  "UINT64":   iIntegerBaseTypeU64,
+  "ULONG":    iIntegerBaseTypeU32,
+  "ULONGLONG": iIntegerBaseTypeU64,
+  "UNKNOWN":  None, # Used to create LPUNKNOWN (Which should be IUknown*)
+  "USHORT":   iIntegerBaseTypeU16,
   #VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-  "VOID": None,
+  "VOID":     None, # Used to create PVOID etc.
   #WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-  "WCHAR": cWChar,
-  "WORD": cU16,
-  "WSTR": cWChar, # Used to create LPWSTR etc.
+  "WCHAR":    iCharacterBaseTypeW,
+  "WORD":     iIntegerBaseTypeU16,
+  "WSTR":     iCharacterBaseTypeW, # Used to create LPWSTR etc.
   #QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
-  "QWORD": cU64,
+  "QWORD":    iIntegerBaseTypeU64,
 };
 
-cVoidPointerType = cPV;
-cVoidPointerType32 = cP32V;
-cVoidPointerType64 = cP64V;
+__all__ = [];
 
-__all__ = [
-  "cVoidPointerType",
-  "cVoidPointerType32",
-  "cVoidPointerType64",
-];
-
-def fExportPrimitive(sName, cType):
+def fExportPrimitive(sName, iBaseType):
+  cType = type(sName, (iBaseType,), {"sName": sName});
   globals()[sName] = cType; # Make it available in the context of this file
   __all__.append(sName); # Make it available as an export from this module.
 
-for (sName, cBaseType) in dcType_by_sName.items():
-  if cBaseType is None:
-    cType = None;
-  else:
-    cType = type(sName, (cBaseType,), {});
-    cType.sName = sName;
-  
-  fExportPrimitive(sName, cType);
-  if cBaseType == cPV:
-    # Pointer types come in 32- and 64-bit variants
-    fExportPrimitive(sName + "32", cP32V);
-    fExportPrimitive(sName + "64", cP64V);
-    # We also export pointer to pointer and their 32- and 64-bit variants
-    fExportPrimitive("P%s" % sName, cPPV);
-    fExportPrimitive("LP%s" % sName, cPPV);
-    fExportPrimitive("P32%s" % sName, cPP32V);    # P32SOMETHING
-    fExportPrimitive("P32%s32" % sName, cPP32V);  # P32SOMETHING32
-    fExportPrimitive("P64%s" % sName, cPP64V);
-    fExportPrimitive("P64%s64" % sName, cPP64V);
-  else:
-    # Rather than manually declaring various pointer-to-primitive-types we'll
-    # automatically declare all common variants. This means we are defining
-    # a lot of stuff that does not actually exist in Windows headers but that 
-    # should not be a problem.
-    cPointerToPrimitiveType = fcCreatePointerType(cType);
-    fExportPrimitive("P%s" % sName, cPointerToPrimitiveType);
-    fExportPrimitive("LP%s" % sName, cPointerToPrimitiveType);
-    fExportPrimitive("%s_PTR" % sName, cPointerToPrimitiveType);
-    fExportPrimitive("PP%s" % sName, fcCreatePointerType(cPointerToPrimitiveType));
-    # We also explicitly define 32-bit and 64-bit pointer-to-primitive-types
-    fExportPrimitive("P32%s" % sName, fcCreatePointerType(cType, uPointerSizeInBits = 32));
-    fExportPrimitive("P64%s" % sName, fcCreatePointerType(cType, uPointerSizeInBits = 64));
+def fExportPointers(sName, iTargetBaseType):
+  iPointerBaseType = iPointerBaseTypeDefault.fcCreateType(iTargetBaseType);
+  fExportPrimitive("P%s" % sName, iPointerBaseType);
+  fExportPrimitive("LP%s" % sName, iPointerBaseType);
+  # We also explicitly define 32-bit and 64-bit pointer-to-types
+  fExportPrimitive("P32%s" % sName, iPointerBaseType32.fcCreateType(iTargetBaseType));
+  fExportPrimitive("P64%s" % sName, iPointerBaseType64.fcCreateType(iTargetBaseType));
+  # We also define pointer-to-pointer-to-type
+  fExportPrimitive("PP%s" % sName, iPointerBaseTypeDefault.fcCreateType(iPointerBaseType));
 
-
-assert UINT8(1)+UINT8(2) == 3, "FAILED!";
-assert 1+UINT8(2) == 3, "FAILED!";
-assert UINT8(1)+2 == 3, "FAILED!";
-assert UINT8(1)+2 == INT8(3), "FAILED!";
-
-assert UINT8(1)-UINT8(2) == -1, "FAILED!";
-assert 1-UINT8(2) == -1, "FAILED!";
-assert UINT8(1)-2 == -1, "FAILED!";
-
-assert UINT8(1)-2 == INT8(-1), "FAILED!";
+for (sName, i0BaseType) in di0BaseType_by_sName.items():
+  if i0BaseType is not None:
+    # For LPVOID and such we do not export "VOID", for the rest we do:
+    fExportPrimitive(sName, i0BaseType);
+  fExportPointers(sName, i0BaseType);
+  # For types based on a pointer, we explicitly export 32- and 64-bit versions.
+  if i0BaseType is iVoidPointerTypeDefault:
+    fExportPrimitive(sName + "32", iVoidPointerType32);
+    fExportPrimitive(sName + "64", iVoidPointerType64);
