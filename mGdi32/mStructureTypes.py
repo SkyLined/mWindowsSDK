@@ -1,5 +1,5 @@
-from ..fcCreatePointerType import fcCreatePointerType;
-from ..fcTypeDefStructure import fcTypeDefStructure;
+from ..mPointerBaseTypes import iPointerBaseTypeDefault;
+from ..mStructureBaseTypes import iStructureBaseTypeDefault;
 from ..STRUCT import STRUCT;
 from ..UNION import UNION;
 from ..mStructureTypes import *;
@@ -9,12 +9,12 @@ from .mPrimitiveTypes import *;
 __all__ = [];
 
 def fExportStructure(sName, *atxFields):
-  cType = fcTypeDefStructure(sName, *atxFields);
+  cType = iStructureBaseTypeDefault.fcCreateType(sName, *atxFields);
+  cpType = iPointerBaseTypeDefault.fcCreateType(cType);
   globals()[sName] = cType; # Make it available in the context of this file
   __all__.append(sName); # Make it available as an export from this module.
   # Also create "P" + name as a pointer to this type:
-  cPointerType = fcCreatePointerType(cType);
-  globals()["P" + sName] = cPointerType; # Make it available in the context of this file
+  globals()["P" + sName] = cpType; # Make it available in the context of this file
   __all__.append("P" + sName); # Make it available as an export from this module.
 
 fExportStructure("D3DDDI_ALLOCATIONLIST",
