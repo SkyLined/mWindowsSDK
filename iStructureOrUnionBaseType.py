@@ -107,7 +107,7 @@ class iStructureOrUnionBaseType(iDataBaseType):
           sPadding = sPadding + ": ",
           sType = "bitfield",
           sName = sMemberName,
-          sValue = oMember.fsDumpValue()
+          sComment = oMember.fsDumpValue()
         ));
     return asDumpData;
   
