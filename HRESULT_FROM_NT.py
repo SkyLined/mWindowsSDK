@@ -1,4 +1,4 @@
-from .mPrimitiveTypes import HRESULT;
+from .mWindowsPrimitiveTypes import HRESULT;
 from .mWindowsConstantDefines import FACILITY_NT_BIT;
 
 def HRESULT_FROM_NT(uNTStatus):

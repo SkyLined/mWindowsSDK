@@ -1,7 +1,7 @@
 import re;
 
-from .mPrimitiveTypes import *;
-from .mStructureTypes import *;
+from .mWindowsPrimitiveTypes import *;
+from .mWindowsStructureTypes import *;
 
 rGUID = re.compile((
   r"^\{"

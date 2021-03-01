@@ -1,7 +1,7 @@
 import platform;
 from cDLL import cDLL;
-from mPrimitiveTypes import *;
-from mStructureTypes import *;
+from mWindowsPrimitiveTypes import *;
+from mWindowsStructureTypes import *;
 
 goKernel32DLL = None;
 def foLoadKernel32DLL():

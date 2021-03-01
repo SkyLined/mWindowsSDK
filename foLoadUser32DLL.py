@@ -1,6 +1,6 @@
 from cDLL import cDLL;
-from mPrimitiveTypes import *;
-from mStructureTypes import *;
+from mWindowsPrimitiveTypes import *;
+from mWindowsStructureTypes import *;
 
 goUser32DLL = None;
 def foLoadUser32DLL():

@@ -1,4 +1,4 @@
-from ..mPrimitiveTypes import *;
+from ..mWindowsPrimitiveTypes import *;
 # Source for these is internet searches, nothing reliable.
 HDC = HANDLE;
 D3DDDI_VIDEO_PRESENT_SOURCE_ID = UINT;

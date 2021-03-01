@@ -2,7 +2,7 @@ from ..mPointerBaseTypes import iPointerBaseTypeDefault;
 from ..mStructureBaseTypes import iStructureBaseTypeDefault;
 from ..STRUCT import STRUCT;
 from ..UNION import UNION;
-from ..mStructureTypes import *;
+from ..mWindowsStructureTypes import *;
 from .mConstantDefines import *;
 from .mPrimitiveTypes import *;
 

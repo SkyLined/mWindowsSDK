@@ -1,6 +1,6 @@
 from cDLL import cDLL;
-from mPrimitiveTypes import *;
-from mStructureTypes import *;
+from mWindowsPrimitiveTypes import *;
+from mWindowsStructureTypes import *;
 
 goOle32DLL = None;
 def foLoadOle32DLL():

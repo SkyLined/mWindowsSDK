@@ -1,4 +1,4 @@
-from .mPrimitiveTypes import HRESULT;
+from .mWindowsPrimitiveTypes import HRESULT;
 
 def SUCCEEDED(oHResult):
   assert isinstance(oHResult, HRESULT), \

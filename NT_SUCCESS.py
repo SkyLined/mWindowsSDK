@@ -1,4 +1,4 @@
-from .mPrimitiveTypes import NTSTATUS;
+from .mWindowsPrimitiveTypes import NTSTATUS;
 
 def NT_SUCCESS(oNTStatus):
   assert isinstance(oNTStatus, NTSTATUS), \

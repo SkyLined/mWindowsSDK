@@ -32,9 +32,9 @@ from .HRESULT_FROM_WIN32 import HRESULT_FROM_WIN32;
 from .WIN32_FROM_HRESULT import WIN32_FROM_HRESULT;
 
 from . import mWindowsConstantDefines;
-from . import mPrimitiveTypes;
-from . import mStructureTypes;
-from . import mGUIDs;
+from . import mWindowsPrimitiveTypes;
+from . import mWindowsStructureTypes;
+from . import mWindowsGUIDs;
 
 from .cDLL import cDLL;
 
@@ -124,9 +124,9 @@ __all__ = [
   "WIN32_FROM_HRESULT",
   
   "mWindowsConstantDefines",
-  "mPrimitiveTypes",
-  "mStructureTypes",
-  "mGUIDs",
+  "mWindowsPrimitiveTypes",
+  "mWindowsStructureTypes",
+  "mWindowsGUIDs",
   
   "cDLL",
   
@@ -148,7 +148,7 @@ __all__ = [
   "fsGetExceptionDescription",
 ];
 
-for mModule in (mWindowsConstantDefines, mPrimitiveTypes, mStructureTypes, mGUIDs):
+for mModule in (mWindowsConstantDefines, mWindowsPrimitiveTypes, mWindowsStructureTypes, mWindowsGUIDs):
   for sName in dir(mModule):
     if sName[0] != "_":
       globals()[sName] = getattr(mModule, sName);

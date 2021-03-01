@@ -5,7 +5,7 @@ from .mUnionBaseTypes import iUnionBaseType32, iUnionBaseType64, iUnionBaseTypeD
 from .STRUCT import STRUCT;
 from .UNION import UNION;
 from .mWindowsConstantDefines import *;
-from .mPrimitiveTypes import *;
+from .mWindowsPrimitiveTypes import *;
 
 __all__ = [];
 
