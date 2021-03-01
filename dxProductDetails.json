@@ -1,9 +1,13 @@
 {
-  "asProductTypes": ["Python module"],
-  "sPythonModuleName": "mWindowsSDK",
   "asDependentOnProductNames": [], 
+  "asJavaScriptModuleNames": [], 
   "asOptionalProductNames": [], 
-  "oProductVersion": "2020-06-17 15:53", 
+  "asPHPModuleNames": [], 
+  "asProductTypes": [
+    "Python module"
+  ], 
+  "asPythonApplicationNames": [], 
+  "oProductVersion": "2021-03-01 09:12", 
   "oRepository": {
     "sBranch": "master", 
     "sRepositoryName": "mWindowsSDK", 
@@ -14,5 +18,6 @@
   "sLicenseServerURL": null, 
   "sProductAuthor": "SkyLined", 
   "sProductName": "mWindowsSDK", 
-  "sProductURL": "https://github.com/SkyLined/mWindowsSDK"
+  "sProductURL": "https://github.com/SkyLined/mWindowsSDK", 
+  "sPythonModuleName": "mWindowsSDK"
 }
