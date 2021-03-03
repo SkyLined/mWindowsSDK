@@ -32,6 +32,7 @@ except:
 
 try:
   from mWindowsSDK import *;
+  from fTestGdi32 import fTestGdi32;
   from fTestKernel32DLL import fTestKernel32DLL;
   from fTestUser32GDIDLL import fTestUser32GDIDLL;
   from fTestCharacterTypes import fTestCharacterTypes;
@@ -39,6 +40,7 @@ try:
   
   fTestCharacterTypes(oConsole);
   fTestIntegerTypes(oConsole);
+  fTestGdi32(oConsole);
   fTestKernel32DLL(oConsole);
   fTestUser32GDIDLL(oConsole);
   oConsole.fOutput("+ Done.");

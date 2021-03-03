@@ -1,4 +1,4 @@
-from ..mWindowsConstantDefines import *;
+from ..mWindowsConstants import *;
 
 D3DKMT_CLIENTHINT_UNKNOWN               = 0;
 D3DKMT_CLIENTHINT_OPENGL                = 1;

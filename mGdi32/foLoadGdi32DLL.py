@@ -1,6 +1,6 @@
 from ..cDLL import cDLL;
-from .mPrimitiveTypes import *;
-from .mStructureTypes import *;
+from .mPrimitives import *;
+from .mStructures import *;
 
 goGdi32DLL = None;
 def foLoadGdi32DLL():
