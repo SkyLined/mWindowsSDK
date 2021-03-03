@@ -109,11 +109,12 @@ class iArrayBaseType(iBaseType, ctypes.Array):
         "This is only implemented for character arrays";
     sEscapedValue = "";
     uLength = None;
-    for uElementIndex in xrange(oSelf.__class__.uElementCount):
+    uMaxCharacterCount = oSelf.__class__.uElementCount;
+    for uElementIndex in xrange(uMaxCharacterCount):
       oChar = oSelf[uElementIndex];
       uCharCode = oChar.fuGetValue();
       if bNullTerminated and uCharCode == 0:
-        uLength = uElementIndex + 1;
+        uLength = uElementIndex;
         break;
       sEscapedValue += (
         "\\0" if uCharCode == 0 else
@@ -127,7 +128,13 @@ class iArrayBaseType(iBaseType, ctypes.Array):
         chr(uCharCode) if uCharCode < 0x100 else
         ("\\u%04X" % uCharCode)
       );
-    return '"%s" (%s)' % (sEscapedValue, "%d chars" % uLength if uLength is not None else "not terminated");
+    return '"%s" (%s)' % (
+             #    #
+             sEscapedValue,
+                  "%d/%d chars + null" % (uLength, uMaxCharacterCount)
+                      if uLength is not None else
+                  "%d chars (not terminated)" % uMaxCharacterCount
+    );
   
   def fasDump(oSelf, s0Name = None, uOffset = 0, sPadding = "", bOutputHeader = True):
     sName = s0Name if s0Name is not None else "%s @ 0x%X" % (oSelf.__class__.sName, oSelf.fuGetAddress());
