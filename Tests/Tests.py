@@ -37,6 +37,15 @@ try:
   from fTestUser32GDIDLL import fTestUser32GDIDLL;
   from fTestCharacterTypes import fTestCharacterTypes;
   from fTestIntegerTypes import fTestIntegerTypes;
+  from mWindowsSDK.fsDumpInteger import fsDumpInteger;
+  
+  for (uValue, sValue) in {
+    1000: "1,000 / 0x3E8",
+    1000000: "1,000,000 / 0xF4240",
+  }.items():
+    assert fsDumpInteger(uValue) == sValue, \
+        "Expected fsDumpInteger(%d) to be %s, but got %s" % \
+        (uValue, repr(sValue), repr(fsDumpInteger(uValue)));
   
   assert NT_SUCCESS(STATUS_SUCCESS), \
       "NT_SUCCESS(STATUS_SUCCESS) => %s instead of True" % repr(NT_SUCCESS(STATUS_SUCCESS));
