@@ -13,6 +13,6 @@ class iUnsignedIntegerBaseType(iIntegerBaseType):
                               #   #        #     #
                               oSelf.__class__.sName,
                                   oSelf.__class__.fuGetSize() * 8,
-                                           fsIntegerToHex(oSelf.fuGetAddress(), bHexOnly = True),
+                                           fsDumpInteger(oSelf.fuGetAddress(), bHexOnly = True),
                                                  oSelf.fsDumpValue(),
     );
