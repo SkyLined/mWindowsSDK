@@ -38,6 +38,11 @@ try:
   from fTestCharacterTypes import fTestCharacterTypes;
   from fTestIntegerTypes import fTestIntegerTypes;
   
+  assert NT_SUCCESS(STATUS_SUCCESS), \
+      "NT_SUCCESS(STATUS_SUCCESS) => %s instead of True" % repr(NT_SUCCESS(STATUS_SUCCESS));
+  assert not NT_ERROR(STATUS_SUCCESS), \
+      "NT_ERROR(STATUS_SUCCESS) => %s instead of False" % repr(NT_ERROR(STATUS_SUCCESS));
+  
   fTestCharacterTypes(oConsole);
   fTestIntegerTypes(oConsole);
   fTestGdi32(oConsole);

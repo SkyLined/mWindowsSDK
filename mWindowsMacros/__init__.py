@@ -10,5 +10,5 @@ for sFileName in os.listdir(sFolderPath):
   if sFilePath == __file__:
     continue;
   sName = os.path.splitext(sFileName)[0];
-  globals()[sName] = __import__(sName, globals(), locals(), [sName], -1);
+  globals()[sName] = getattr(__import__(sName, globals(), locals(), [sName], -1), sName);
   __all__.append(sName);
