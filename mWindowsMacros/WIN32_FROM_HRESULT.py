@@ -1,4 +1,4 @@
-from .mWindowsPrimitiveTypes import HRESULT;
+from ..mWindowsPrimitives import HRESULT;
 
 def WIN32_FROM_HRESULT(ohResult):
   assert isinstance(ohResult, HRESULT), \

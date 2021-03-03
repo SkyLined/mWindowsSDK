@@ -1,12 +1,13 @@
 import ctypes, inspect;
 
-from .iDataBaseType import iDataBaseType;
+from .fsDumpInteger import fsDumpInteger;
+from .iBaseType import iBaseType;
 
 guNamelessStructureOrUnionsCounter = 0;
 
-class iStructureOrUnionBaseType(iDataBaseType):
+class iStructureOrUnionBaseType(iBaseType):
   @classmethod
-  def fcCreateType(iStructureOrUnionBaseType, s0Name, *axFields):
+  def fcCreateClass(iStructureOrUnionType, s0Name, *axFields):
     global guNamelessStructureOrUnionsCounter;
     if s0Name:
       sName = s0Name;
@@ -19,9 +20,9 @@ class iStructureOrUnionBaseType(iDataBaseType):
       if isinstance(xField, tuple):
         if len(xField) > 2:
           # (TYPE, NAME, SIZE IN BITS[, NAME, SIZE IN BITS[, ...]])
-          cFieldType = xField[0];
-          assert issubclass(cFieldType, iDataBaseType), \
-              "FieldType for %s must be a type, not %s" % (sName, repr(cFieldType));
+          cFieldClass = xField[0];
+          assert issubclass(cFieldClass, iBaseType), \
+              "FieldType for %s must be a type, not %s" % (sName, repr(cFieldClass));
           for uIndex in xrange(1, len(xField), 2):
             s0FieldName = xField[uIndex];
             if s0FieldName is None:
@@ -34,31 +35,31 @@ class iStructureOrUnionBaseType(iDataBaseType):
                 "FieldName for %s must be a string, not %s" % (sName, repr(sFieldName));
             assert isinstance(uFieldSizeInBits, (int, long)) and uFieldSizeInBits > 0, \
                 "uFieldSizeInBits for %s must be a positive integer larger than zero, not %s" % (sName, repr(uFieldSizeInBits));
-            atxFields.append((sFieldName, cFieldType, uFieldSizeInBits));
+            atxFields.append((sFieldName, cFieldClass, uFieldSizeInBits));
           continue;
-        cFieldType, sFieldName = xField;
+        cFieldClass, sFieldName = xField;
       else:
-        cFieldType = xField;
+        cFieldClass = xField;
         sFieldName = "_anonymous_field_%d_" % len(asAnonymousFieldNames);
         asAnonymousFieldNames.append(sFieldName);
       from .STRUCT import STRUCT;
       from .UNION import UNION;
-      from mStructureBaseTypes import iStructureBaseType32, iStructureBaseType64;
-      from mUnionBaseTypes import iUnionBaseType32, iUnionBaseType64;
-      if cFieldType.__class__ in (STRUCT, UNION):
-        iFieldBaseType = {
-          STRUCT: {32: iStructureBaseType32, 64: iStructureBaseType64},
-          UNION:  {32: iUnionBaseType32, 64: iUnionBaseType64}
-        }[cFieldType.__class__][iStructureOrUnionBaseType.uAlignmentInBits];
-        cFieldType = iFieldBaseType.fcCreateType(None, *cFieldType.axFields);
+      from mStructureTypes import iStructureType32, iStructureType64;
+      from mUnionTypes import iUnionType32, iUnionType64;
+      if cFieldClass.__class__ in (STRUCT, UNION):
+        iFieldType = {
+          STRUCT: {32: iStructureType32, 64: iStructureType64},
+          UNION:  {32: iUnionType32, 64: iUnionType64}
+        }[cFieldClass.__class__][iStructureOrUnionType.uAlignmentInBits];
+        cFieldClass = iFieldType.fcCreateClass(None, *cFieldClass.axFields);
       assert isinstance(sFieldName, str), \
           "FieldName for %s must be a string, not %s (in %s)" % (sName, repr(sFieldName), repr(xField));
-      assert inspect.isclass(cFieldType) and issubclass(cFieldType, iDataBaseType), \
-          "FieldType for %s.%s must be derived from iDataBaseType but %s is not %s(in %s)" % \
-          (sName, sFieldName, repr(cFieldType), repr(xField));
-      atxFields.append((sFieldName, cFieldType));
+      assert inspect.isclass(cFieldClass) and issubclass(cFieldClass, iBaseType), \
+          "FieldType for %s.%s must be derived from iBaseType but %s is not %s(in %s)" % \
+          (sName, sFieldName, repr(cFieldClass), repr(xField));
+      atxFields.append((sFieldName, cFieldClass));
     
-    cStructureOrUnion = type(sName, (iStructureOrUnionBaseType,), {
+    cStructureOrUnion = type(sName, (iStructureOrUnionType,), {
       "_anonymous_": asAnonymousFieldNames,
       "_fields_": atxFields,
       "sName": sName,
@@ -107,16 +108,17 @@ class iStructureOrUnionBaseType(iDataBaseType):
           sPadding = sPadding + ": ",
           sType = "bitfield",
           sName = sMemberName,
-          sComment = oMember.fsDumpValue()
+          sComment = "value = %s" % oMember.fsDumpValue()
         ));
     return asDumpData;
   
   def __repr__(oSelf):
-    return "<%s %s:%d @ 0x%X>" % (
-      "struct" if oSelf.bIsStructure else "union",
-      oSelf.__class__.sName,
-      oSelf.fuGetSize(),
-      oSelf.fuGetAddress(),
+    return "<%s %s (%s bytes @ %s)>" % (
+             #  #   #          #
+             "struct" if oSelf.bIsStructure else "union",
+                oSelf.__class__.sName,
+                    fsDumpInteger(oSelf.fuGetSize()),
+                               fsDumpInteger(oSelf.fuGetAddress(), bHexOnly = True),
     );
 
 from ._mDump import _fasGetDumpHeader, _fsFormatDumpLine, _fasGetDumpFooter;

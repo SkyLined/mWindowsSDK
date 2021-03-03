@@ -1,4 +1,4 @@
-from .dsHResultDefineName_by_uValue import dsHResultDefineName_by_uValue;
+from .mWindowsConstants.dsHResultDefineName_by_uValue import dsHResultDefineName_by_uValue;
 from .fsGetWin32ErrorCodeDescription import fsGetWin32ErrorCodeDescription;
 
 def fsGetHResultDescription(uHResultValue):

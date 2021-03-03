@@ -1,4 +1,4 @@
-from .dsWin32ErrorCodeDefineName_by_uValue import dsWin32ErrorCodeDefineName_by_uValue;
+from .mWindowsConstants.dsWin32ErrorCodeDefineName_by_uValue import dsWin32ErrorCodeDefineName_by_uValue;
 
 def fs0GetWin32ErrorCodeDefineName(uWin32ErrorCode):
   return dsWin32ErrorCodeDefineName_by_uValue.get(uWin32ErrorCode);

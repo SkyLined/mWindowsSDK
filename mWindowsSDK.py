@@ -1,20 +1,41 @@
 from .iArrayBaseType import iArrayBaseType;
-from .mCharacterBaseTypes import iCharacterBaseType, iCharacterBaseTypeA, iCharacterBaseTypeW;
-from .mIntegerBaseTypes import \
-    iIntegerBaseType, iIntegerBaseTypeB, iIntegerBaseTypeI, iIntegerBaseTypeU, \
-    iIntegerBaseTypeI8, iIntegerBaseTypeI16, iIntegerBaseTypeI32, iIntegerBaseTypeI64, iIntegerBaseTypeIDefault, \
-    iIntegerBaseTypeU8, iIntegerBaseTypeU16, iIntegerBaseTypeU32, iIntegerBaseTypeU64, iIntegerBaseTypeUDefault;
-from .mFloatingPointBaseTypes import iFloatingPointBaseType, iFloatingPointBaseType32, iFloatingPointBaseType64;
-from .mPointerBaseTypes import \
-    iPointerBaseType, iPointerBaseType32, iPointerBaseType64, iPointerBaseTypeDefault, \
-    iVoidPointerType32, iVoidPointerType64, iVoidPointerTypeDefault, \
-    iVoidPointerPointerType32, iVoidPointerPointerType64, iVoidPointerPointerTypeDefault;
-from .mStructureBaseTypes import \
-  iStructureBaseType, \
-  iStructureBaseType8, iStructureBaseType16, iStructureBaseType32, iStructureBaseType64, iStructureBaseTypeDefault;
-from .mUnionBaseTypes import \
-  iUnionBaseType, \
-  iUnionBaseType8, iUnionBaseType16, iUnionBaseType32, iUnionBaseType64, iUnionBaseTypeDefault;
+from .iCharacterBaseType import iCharacterBaseType;
+from .mCharacterClasses import \
+  cCharacterA, cCharacterW;
+
+# Integer Types
+from .iIntegerBaseType import iIntegerBaseType;
+from .iBooleanBaseType import iBooleanBaseType;
+from .iSignedIntegerBaseType import iSignedIntegerBaseType;
+from .iUnsignedIntegerBaseType import iUnsignedIntegerBaseType;
+# Integer Classes
+from .mBooleanClasses import \
+    cBoolean8, cBoolean16, cBoolean32, cBoolean64, cBoolean;
+from .mSignedIntegerClasses import \
+    cSignedInteger8, cSignedInteger16, cSignedInteger32, cSignedInteger64, cSignedInteger;
+from .mUnsignedIntegerClasses import \
+    cUnsignedInteger8, cUnsignedInteger16, cUnsignedInteger32, cUnsignedInteger64, cUnsignedInteger;
+# Floating Types
+from .iFloatingPointBaseType import iFloatingPointBaseType;
+# Floating Classes
+from .mFloatingPointClasses import \
+    cFloatingPoint32, cFloatingPoint64;
+# Pointer Types
+from .iPointerBaseType import iPointerBaseType
+from .mPointerTypes import \
+    iPointerType, iPointerType32, iPointerType64;
+# Pointer Classes
+from .mPointerClasses import \
+    cVoidPointer32, cVoidPointer64, cVoidPointer, \
+    cVoidPointerPointer32, cVoidPointerPointer64, cVoidPointerPointer;
+# Structure Types
+from .iStructureBaseType import iStructureBaseType;
+from .mStructureTypes import \
+  iStructureType8, iStructureType16, iStructureType32, iStructureType64, iStructureType;
+# Union Types
+from .iUnionBaseType import iUnionBaseType;
+from .mUnionTypes import \
+  iUnionType8, iUnionType16, iUnionType32, iUnionType64, iUnionType;
 
 from .fsGetStringAtAddress import fsGetStringAtAddress;
 
@@ -23,17 +44,10 @@ from .foParseGUID import foParseGUID;
 from .STRUCT import STRUCT;
 from .UNION import UNION;
 
-from .FAILED import FAILED;
-from .SUCCEEDED import SUCCEEDED;
-from .NT_SUCCESS import NT_SUCCESS;
-from .NT_ERROR import NT_ERROR;
-from .HRESULT_FROM_NT import HRESULT_FROM_NT;
-from .HRESULT_FROM_WIN32 import HRESULT_FROM_WIN32;
-from .WIN32_FROM_HRESULT import WIN32_FROM_HRESULT;
-
-from . import mWindowsConstantDefines;
-from . import mWindowsPrimitiveTypes;
-from . import mWindowsStructureTypes;
+from . import mWindowsMacros;
+from . import mWindowsConstants;
+from . import mWindowsPrimitives;
+from . import mWindowsStructures;
 from . import mWindowsGUIDs;
 
 from .cDLL import cDLL;
@@ -56,80 +70,70 @@ from .fs0GetExceptionDefineName import fs0GetExceptionDefineName;
 from .fsGetExceptionDescription import fsGetExceptionDescription;
 
 __all__ = [
+  # Base Types
   "iArrayBaseType",
-  
+  "iBooleanBaseType",
   "iCharacterBaseType",
-  "iCharacterBaseTypeA",
-  "iCharacterBaseTypeW",
-  
-  "iIntegerBaseType",
-  "iIntegerBaseTypeB",
-  "iIntegerBaseTypeI",
-  "iIntegerBaseTypeU",
-  "iIntegerBaseTypeB8",
-  "iIntegerBaseTypeB16",
-  "iIntegerBaseTypeB32",
-  "iIntegerBaseTypeB64",
-  "iIntegerBaseTypeBDefault",
-  "iIntegerBaseTypeI8",
-  "iIntegerBaseTypeI16",
-  "iIntegerBaseTypeI32",
-  "iIntegerBaseTypeI64",
-  "iIntegerBaseTypeIDefault",
-  "iIntegerBaseTypeU8",
-  "iIntegerBaseTypeU16",
-  "iIntegerBaseTypeU32",
-  "iIntegerBaseTypeU64",
-  "iIntegerBaseTypeUDefault",
-  
   "iFloatingPointBaseType",
-  "iFloatingPointBaseType32",
-  "iFloatingPointBaseType64",
-  
   "iPointerBaseType",
-  "iPointerBaseType32",
-  "iPointerBaseType64",
-  "iPointerBaseTypeDefault",
-  "iVoidPointerType32",
-  "iVoidPointerType64",
-  "iVoidPointerTypeDefault",
-  "iVoidPointerPointerType32",
-  "iVoidPointerPointerType64",
-  "iVoidPointerPointerTypeDefault",
-  
+  "iSignedIntegerBaseType",
   "iStructureBaseType",
-  "iStructureBaseType8",
-  "iStructureBaseType16",
-  "iStructureBaseType32",
-  "iStructureBaseType64",
-  "iStructureBaseTypeDefault",
-  
   "iUnionBaseType",
-  "iUnionBaseType8",
-  "iUnionBaseType16",
-  "iUnionBaseType32",
-  "iUnionBaseType64",
-  "iUnionBaseTypeDefault",
+  "iUnsignedIntegerBaseType",
+  # Base Types with size/alignment defined.
+  "iPointerType",
+  "iPointerType32",
+  "iPointerType64",
+  "iStructureType",
+  "iStructureType8",
+  "iStructureType16",
+  "iStructureType32",
+  "iStructureType64",
+  "iUnionType",
+  "iUnionType8",
+  "iUnionType16",
+  "iUnionType32",
+  "iUnionType64",
+  # Type Classes
+  "cBoolean",
+  "cBoolean8",
+  "cBoolean16",
+  "cBoolean32",
+  "cBoolean64",
+  "cCharacterA",
+  "cCharacterW",
+  "cFloatingPoint32",
+  "cFloatingPoint64",
+  "cSignedInteger",
+  "cSignedInteger8",
+  "cSignedInteger16",
+  "cSignedInteger32",
+  "cSignedInteger64",
+  "cUnsignedInteger",
+  "cUnsignedInteger8",
+  "cUnsignedInteger16",
+  "cUnsignedInteger32",
+  "cUnsignedInteger64",
+  "cVoidPointerPointer",
+  "cVoidPointerPointer32",
+  "cVoidPointerPointer64",
+  "cVoidPointer",
+  "cVoidPointer32",
+  "cVoidPointer64",
+  # DLL base class
+  "cDLL",
   
+  # Miscelanious stuff
   "fsGetStringAtAddress",
   
   "foParseGUID",
-  
-  "FAILED",
-  "SUCCEEDED",
-  "NT_SUCCESS",
-  "NT_ERROR",
-  "HRESULT_FROM_NT",
-  "HRESULT_FROM_WIN32",
-  "WIN32_FROM_HRESULT",
-  
-  "mWindowsConstantDefines",
-  "mWindowsPrimitiveTypes",
-  "mWindowsStructureTypes",
+  # Windows specific stuff
+  "mWindowsConstants",
   "mWindowsGUIDs",
-  
-  "cDLL",
-  
+  "mWindowsMacros",
+  "mWindowsPrimitives",
+  "mWindowsStructures",
+  # Windows DLL loaders
   "foLoadAdvAPI32DLL",
   "foLoadDbgHelpDLL",
   "foLoadKernel32DLL",
@@ -148,7 +152,7 @@ __all__ = [
   "fsGetExceptionDescription",
 ];
 
-for mModule in (mWindowsConstantDefines, mWindowsPrimitiveTypes, mWindowsStructureTypes, mWindowsGUIDs):
+for mModule in (mWindowsConstants, mWindowsGUIDs, mWindowsMacros, mWindowsPrimitives, mWindowsStructures):
   for sName in dir(mModule):
     if sName[0] != "_":
       globals()[sName] = getattr(mModule, sName);

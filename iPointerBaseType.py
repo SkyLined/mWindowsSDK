@@ -1,43 +1,50 @@
-import ctypes, inspect;
+import ctypes, inspect, re;
 
-from .mIntegerBaseTypes import iIntegerBaseType;
+from .fsDumpInteger import fsDumpInteger;
+from .iUnsignedIntegerBaseType import iUnsignedIntegerBaseType;
 from .uProcessBits import uProcessBits;
 
-gddcPointerType_by_uPointerSizeInBits_by_c0TargetType = {};
+gddcPointerType_by_uPointerSizeInBits_by_c0TargetClass = {};
 
-class iPointerBaseType(iIntegerBaseType):
+class iPointerBaseType(iUnsignedIntegerBaseType):
   o0HardLinkedTarget = None;
   
   @classmethod
-  def fcCreateType(iPointerBaseType, c0TargetType = None):
-    global gddcPointerType_by_uPointerSizeInBits_by_c0TargetType;
-    assert c0TargetType is None or (inspect.isclass(c0TargetType) and issubclass(c0TargetType, iDataBaseType)), \
-        "c0TargetType is not a type but %s" % repr(c0TargetType);
-    uPointerSizeInBits = iPointerBaseType.fuGetSize() * 8;
-    dcPointerType_by_uPointerSizeInBits = gddcPointerType_by_uPointerSizeInBits_by_c0TargetType.setdefault(c0TargetType, {});
+  def fcCreateSubClassForTargetType(cPointerBaseType, c0TargetClass):
+    global gddcPointerType_by_uPointerSizeInBits_by_c0TargetClass;
+    assert c0TargetClass is None or (inspect.isclass(c0TargetClass) and issubclass(c0TargetClass, iBaseType)), \
+        "c0TargetClass is not a type but %s" % repr(c0TargetClass);
+    # For a pointer to an array, we create a pointer to the first element in the array. This means we have to adjust
+    # the class of the target:
+    if c0TargetClass and issubclass(c0TargetClass, iArrayBaseType):
+      c0TargetClass = c0TargetClass.cElementClass;
+    uPointerSizeInBits = cPointerBaseType.fuGetSize() * 8;
+    dcPointerType_by_uPointerSizeInBits = gddcPointerType_by_uPointerSizeInBits_by_c0TargetClass.setdefault(c0TargetClass, {});
     cPointerType = dcPointerType_by_uPointerSizeInBits.get(uPointerSizeInBits);
     
     if cPointerType is None:
       # Pointer name starts with "P" if the size of the pointer is default, "P32"/"P64" if it is not.
-      sPointerPrefix = "" if iPointerBaseType == iPointerBaseTypeDefault else str(uPointerSizeInBits);
       cPointerType = type(
-        "P%s%s" % (sPointerPrefix, c0TargetType.sName if c0TargetType is not None else "VOID"),
-        (iPointerBaseType,),
+        "P%s%s" % (
+          "" if uPointerSizeInBits == uProcessBits else str(uPointerSizeInBits),
+          c0TargetClass.sName if c0TargetClass is not None else "VOID"
+        ),
+        (cPointerBaseType,),
         {},
       );
       dcPointerType_by_uPointerSizeInBits[uPointerSizeInBits] = cPointerType;
       cPointerType.sName = cPointerType.__name__;
       cPointerType.uPointerSizeInBits = uPointerSizeInBits;
-      cPointerType.c0TargetType = c0TargetType;
+      cPointerType.c0TargetClass = c0TargetClass;
     
     return cPointerType;
   
   @classmethod
-  def foCreate(iPointerBaseType, oTarget):
-    assert isinstance(oTarget, iDataBaseType), \
+  def foCreateForTarget(cPointerBaseClass, oTarget):
+    assert isinstance(oTarget, iBaseType), \
         "oTarget is not a valid type but %s" % repr(oTarget);
-    cPointerType = iPointerBaseType.fcCreateType(oTarget.__class__);
-    return cPointerType(oTarget);
+    cPointerSubClass = cPointerBaseClass.fcCreateSubClassForTargetType(oTarget.__class__);
+    return cPointerSubClass(oTarget);
   
   def __init__(oSelf, oTarget_sString_or_u0Address = None, bCast = False):
     # oTarget_sString_or_u0Address can be:
@@ -46,7 +53,7 @@ class iPointerBaseType(iIntegerBaseType):
     # 3) A string, which creates a array of chars and initializes it with the string (zero terminated) and then creates
     #    a pointer to that array. The type of char is based on the type of the pointer and the array is stored in the
     #    `o0HardLinkedTarget property to avoid it being freed while the pointer exists.
-    # 4) Any instance of a class derived from `iDataBaseType`, which creates a pointer to the address at which this
+    # 4) Any instance of a class derived from `iBaseType`, which creates a pointer to the address at which this
     #    instance is stored in memory. The instance is also stored in the `o0HardLinkedTarget` property to avoid it being
     #    freed while the pointer exists.
     if oTarget_sString_or_u0Address is None or isinstance(oTarget_sString_or_u0Address, (int, long)):
@@ -56,29 +63,34 @@ class iPointerBaseType(iIntegerBaseType):
         # Create a copy of the string as a buffer (an array of characters), including a 0 terminator. Then use that
         # buffer as if it was provided as the target: save it in the `o0HardLinkedTarget` property and use its address
         # for the pointer.
-        cCharacterType = oSelf.__class__.c0TargetType;
+        cCharacterType = oSelf.__class__.c0TargetClass;
         assert issubclass(cCharacterType, iCharacterBaseType), \
             "Cannot create a %s from %s, as it does not a pointer to a character type." % \
             (oSelf.__class__.sName, repr(oTarget_sString_or_u0Address));
         oSelf.o0HardLinkedTarget = cCharacterType.foCreateBufferFromString(oTarget_sString_or_u0Address);
       else:
-        assert isinstance(oTarget_sString_or_u0Address, iDataBaseType), \
+        assert isinstance(oTarget_sString_or_u0Address, iBaseType), \
             "Cannot create a pointer from %s." % (repr(oTarget_sString_or_u0Address),)
         oSelf.o0HardLinkedTarget = oTarget_sString_or_u0Address;
       # Do some sanity checks, only we are explicitly casting.
       if not bCast: # If we are not casting, we will do type checks
-        c0PointerTargetType = oSelf.__class__.c0TargetType;
+        c0PointerTargetType = oSelf.__class__.c0TargetClass;
         if isinstance(oSelf.o0HardLinkedTarget, iArrayBaseType):
-          cArrayElementType = oSelf.o0HardLinkedTarget.__class__.cElementType;
-          if issubclass(cArrayElementType, iCharacterBaseType):
-            # For pointers to characters, we do very lax type checking: as long as they are both Unicode or not, we're good.
-            assert c0PointerTargetType.bUnicode == cArrayElementType.bUnicode, \
+          cArrayClass = oSelf.o0HardLinkedTarget.__class__;
+          cArrayElementClass = cArrayClass.cElementClass;
+          if issubclass(cArrayElementClass, iCharacterBaseType):
+            # For pointers to characters, we do more relaxed type checking: as long as the pointer points to the same
+            # size character, we don't care about the exact type:
+            assert (
+              issubclass(c0PointerTargetType, iCharacterBaseType) \
+              and c0PointerTargetType.fuGetSize() == cArrayElementClass.fuGetSize()
+            ), \
                 "Cannot creata a %s from %s without bCast = True: the pointer target type (%s) does not match the array element type (%s)" % \
-                (oSelf.__class__.sName, repr(oSelf.o0HardLinkedTarget), c0PointerTargetType.sName if c0PointerTargetType else "VOID", cArrayElementType.sName);
+                (oSelf.__class__.sName, repr(oSelf.o0HardLinkedTarget), c0PointerTargetType.sName if c0PointerTargetType else "VOID", cArrayElementClass.sName);
           else:
-            assert c0PointerTargetType is cArrayElementType, \
+            assert c0PointerTargetType is cArrayElementClass, \
                 "Cannot creata a %s from %s without bCast = True: the pointer target type (%s) does not match the array element type (%s)" % \
-                (oSelf.__class__.sName, repr(oSelf.o0HardLinkedTarget), c0PointerTargetType.sName if c0PointerTargetType else "VOID", cArrayElementType.sName);
+                (oSelf.__class__.sName, repr(oSelf.o0HardLinkedTarget), c0PointerTargetType.sName if c0PointerTargetType else "VOID", cArrayElementClass.sName);
         else:
           assert c0PointerTargetType is not None and isinstance(oSelf.o0HardLinkedTarget, c0PointerTargetType), \
               "Cannot create a %s from %s without bCast = True: the pointer target type (%s) does not match the target." % \
@@ -91,25 +103,27 @@ class iPointerBaseType(iIntegerBaseType):
     return oSelf.fuGetValue() == 0;
   
   def fo0GetTarget(oSelf):
+    uTargetAddress = oSelf.fuGetTargetAddress();
     return (
-      oSelf.__class__.c0TargetType.from_address(oSelf.value) \
-          if oSelf.value != 0 and oSelf.__class__.c0TargetType is not None else \
+      oSelf.__class__.c0TargetClass.from_address(uTargetAddress) \
+          if uTargetAddress != 0 and oSelf.__class__.c0TargetClass is not None else \
       None
     );
-  def fc0GetTargetType(oSelf):
-    return oSelf.__class__.c0TargetType;
+  
+  def fuGetTargetAddress(oSelf):
+    return oSelf.fuGetValue();
   
   def fsGetValue(oSelf, u0MaxLength = None):
-    assert oSelf.__class__.c0TargetType is not None and issubclass(oSelf.__class__.c0TargetType, iCharacterBaseType), \
+    assert oSelf.__class__.c0TargetClass is not None and issubclass(oSelf.__class__.c0TargetClass, iCharacterBaseType), \
         "Cannot get a string for %s" % oSelf.__class__.sName;
-    sData = oSelf.__class__.c0TargetType.sEmptyString;
-    uAddress = oSelf.fuGetValue();
+    sData = oSelf.__class__.c0TargetClass.sEmptyString;
+    uAddress = oSelf.fuGetTargetAddress();
     while u0MaxLength is None or u0MaxLength > 0:
-      oChar = oSelf.__class__.c0TargetType.from_address(uAddress);
+      oChar = oSelf.__class__.c0TargetClass.from_address(uAddress);
       if oChar.fuGetValue() == 0:
         break;
       sData += oChar.fsGetValue();
-      uAddress += oSelf.__class__.c0TargetType.uCharSize;
+      uAddress += oSelf.__class__.c0TargetClass.uCharSize;
       if u0MaxLength is not None:
         u0MaxLength -= 1;
     return sData;
@@ -121,36 +135,20 @@ class iPointerBaseType(iIntegerBaseType):
     return oNew;
   
   def fsDumpValue(oSelf):
-    uTargetAddress = oSelf.fuGetValue();
-    return "0x%X" % uTargetAddress if uTargetAddress != 0 else "NULL";
+    uTargetAddress = oSelf.fuGetTargetAddress();
+    return "NULL" if uTargetAddress == 0 else fsDumpInteger(uTargetAddress, bHexOnly = True);
   
   def __repr__(oSelf):
-    # Imports are done JIT to prevent import loops.
-    uTargetAddress = oSelf.value;
-    if oSelf.o0HardLinkedTarget is not None:
-      sPointsTo = " =strong=> %s" % repr(oSelf.o0HardLinkedTarget);
-    else:
-      sPointsTo = " (weak)";
-    return "<pointer %s:%d(0x%X) @ 0x%X%s>" % (
-      oSelf.__class__.sName,
-      oSelf.fuGetSize(),
-      uTargetAddress,
-      oSelf.fuGetAddress(),
-      sPointsTo,
+    return "<pointer %s (%d-bit @ %s) =%s=> %s @ %s>" % (
+                     #   #        #    #    #    #
+                     oSelf.__class__.sName,
+                         oSelf.__class__.fuGetSize() * 8,
+                                  fsDumpInteger(oSelf.fuGetAddress(), bHexOnly = True),
+                                       "weak" if oSelf.o0HardLinkedTarget is None else "strong",
+                                            oSelf.__class__.c0TargetClass.sName if oSelf.__class__.c0TargetClass else "VOID",
+                                                 oSelf.fsDumpValue(),
     );
 
-iPointerBaseType32 = type("iPointerBaseType32", (iPointerBaseType, ctypes.c_ulong), {});
-iPointerBaseType64 = type("iPointerBaseType64", (iPointerBaseType, ctypes.c_ulonglong), {});
-iPointerBaseTypeDefault = {32: iPointerBaseType32, 64: iPointerBaseType64}[uProcessBits];
-
-from .iDataBaseType import iDataBaseType;
+from .iBaseType import iBaseType;
 from .iArrayBaseType import iArrayBaseType;
-from .mCharacterBaseTypes import iCharacterBaseType;
-
-iVoidPointerType32        = iPointerBaseType32.fcCreateType();
-iVoidPointerType64        = iPointerBaseType64.fcCreateType();
-iVoidPointerTypeDefault   = iPointerBaseTypeDefault.fcCreateType();
-iVoidPointerPointerType32 = iPointerBaseType32.fcCreateType(iVoidPointerType32);
-iVoidPointerPointerType64 = iPointerBaseType64.fcCreateType(iVoidPointerType64);
-iVoidPointerPointerTypeDefault = iPointerBaseTypeDefault.fcCreateType(iVoidPointerTypeDefault);
-
+from .iCharacterBaseType import iCharacterBaseType;

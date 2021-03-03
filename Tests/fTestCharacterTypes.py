@@ -1,4 +1,4 @@
-from mWindowsSDK import iCharacterBaseTypeW, iPointerBaseTypeDefault;
+from mWindowsSDK import cCharacterW;
 
 def fTestCharacterTypes(oConsole):
   def fCheckPointer(oBuffer, sExpectedBufferChars):
@@ -11,7 +11,7 @@ def fTestCharacterTypes(oConsole):
     assert sExpectedBufferChars == sBufferChars, \
         "Expected %s, got %s" % (repr(sExpectedBufferChars), repr(sBufferChars));
   
-  WCHARx8 = iCharacterBaseTypeW[8];
+  WCHARx8 = cCharacterW[8];
   oBuffer = WCHARx8("....");
   oBuffer[1].fSetValue(u"X");
   oBuffer[5].fSetValue(u"\u1234");
@@ -27,6 +27,6 @@ def fTestCharacterTypes(oConsole):
   else:
     raise AssertionError("oOOB = %s" % repr(oOOB));
   
-  cBufferTypeW = iPointerBaseTypeDefault.fcCreateType(iCharacterBaseTypeW);
+  cBufferTypeW = cCharacterW.fcCreatePointer();
   oBuffer = cBufferTypeW("Test");
   fCheckPointer(oBuffer, u"Test");

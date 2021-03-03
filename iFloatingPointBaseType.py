@@ -14,6 +14,3 @@ class iFloatingPointBaseType(iPrimitiveBaseType):
   
   def fsDumpValue(oSelf):
     return "value = %s" % oSelf.value;
-
-iFloatingPointBaseType32  = iFloatingPointBaseType.fcCreateType("iFloatingPointBaseType32", ctypes.c_float);
-iFloatingPointBaseType64  = iFloatingPointBaseType.fcCreateType("iFloatingPointBaseType64", ctypes.c_double);

@@ -1,6 +1,6 @@
 import ctypes;
 
-class iDataBaseType(object):
+class iBaseType(object):
   @classmethod
   def fuGetSize(cSelf):
     return ctypes.sizeof(cSelf);
@@ -28,20 +28,26 @@ class iDataBaseType(object):
   def fauGetBytes(oSelf):
     return [ord(sByte) for sByte in ctypes.string_at(oSelf.fuGetAddress(), oSelf.fuGetSize())];
   
+  @classmethod
+  def fcCreatePointer32(cSelf):
+    from .mPointerTypes import iPointerType32;
+    return iPointerType32.fcCreateSubClassForTargetType(cSelf);
   def foCreatePointer32(oSelf):
-    from .mPointerBaseTypes import iPointerBaseType32;
-    return oSelf.foCreatePointerForBaseType(iPointerBaseType32);
+    return oSelf.__class__.fcCreatePointer32()(oSelf);
+  
+  @classmethod
+  def fcCreatePointer64(cSelf):
+    from .mPointerTypes import iPointerType64;
+    return iPointerType64.fcCreateSubClassForTargetType(cSelf);
   def foCreatePointer64(oSelf):
-    from .mPointerBaseTypes import iPointerBaseType64;
-    return oSelf.foCreatePointerForBaseType(iPointerBaseType64);
-  def foCreatePointer(oSelf, cPointerType = None):
-    if cPointerType:
-      return cPointerType(oSelf, bCast = True);
-    from .mPointerBaseTypes import iPointerBaseTypeDefault;
-    return oSelf.foCreatePointerForBaseType(iPointerBaseTypeDefault);
-  def foCreatePointerForBaseType(oSelf, iPointerBaseType):
-    cPointerType = iPointerBaseType.fcCreateType(oSelf.__class__);
-    return oSelf.foCreatePointer(cPointerType);
+    return oSelf.__class__.fcCreatePointer64()(oSelf);
+
+  @classmethod
+  def fcCreatePointer(cSelf):
+    from .mPointerTypes import iPointerType;
+    return iPointerType.fcCreateSubClassForTargetType(cSelf);
+  def foCreatePointer(oSelf):
+    return oSelf.__class__.fcCreatePointer()(oSelf);
   
   def foCastTo(oSelf, cNewType):
     # We will make a copy rather than cast the object, as we are a memory safe language. This will prevent the

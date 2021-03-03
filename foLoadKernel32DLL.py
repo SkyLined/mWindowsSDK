@@ -1,13 +1,12 @@
-import platform;
-from cDLL import cDLL;
-from mWindowsPrimitiveTypes import *;
-from mWindowsStructureTypes import *;
+from .cDLL import cDLL;
+from .mWindowsPrimitives import *;
+from .mWindowsStructures import *;
+from .uProcessBits import uProcessBits;
 
 goKernel32DLL = None;
 def foLoadKernel32DLL():
   global goKernel32DLL;
   if goKernel32DLL is None:
-    bIs64Bit = platform.architecture()[0] == "64bit";
     goKernel32DLL = cDLL(
       "kernel32.dll",
       {
@@ -337,11 +336,11 @@ def foLoadKernel32DLL():
         },
         "GetThreadContext": {
           "xReturnType": BOOL,
-          "txArgumentTypes": (HANDLE, PCONTEXT64 if bIs64Bit else PCONTEXT32),
+          "txArgumentTypes": (HANDLE, PCONTEXT64 if uProcessBits == 64 else PCONTEXT32),
         },
         "SetThreadContext": {
           "xReturnType": BOOL,
-          "txArgumentTypes": (HANDLE, PCONTEXT64 if bIs64Bit else PCONTEXT32),
+          "txArgumentTypes": (HANDLE, PCONTEXT64 if uProcessBits == 64 else PCONTEXT32),
         },
         "Wow64GetThreadContext": {
           "xReturnType": BOOL,

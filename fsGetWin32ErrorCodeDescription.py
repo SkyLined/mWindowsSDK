@@ -1,4 +1,4 @@
-from .dsWin32ErrorCodeDefineName_by_uValue import dsWin32ErrorCodeDefineName_by_uValue;
+from .mWindowsConstants.dsWin32ErrorCodeDefineName_by_uValue import dsWin32ErrorCodeDefineName_by_uValue;
 
 def fsGetWin32ErrorCodeDescription(uWin32ErrorCode):
   sDetails = dsWin32ErrorCodeDefineName_by_uValue.get(uWin32ErrorCode, "unknown") if uWin32ErrorCode < 0x10000 else "invalid";

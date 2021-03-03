@@ -1,10 +1,7 @@
-import ctypes, json;
+from .fsDumpInteger import fsDumpInteger;
+from .iUnsignedIntegerBaseType import iUnsignedIntegerBaseType;
 
-from .mIntegerBaseTypes import iIntegerBaseType;
-
-gddcBufferType_by_uLength_by_cCharacterType = {};
-
-class iCharacterBaseType(iIntegerBaseType):
+class iCharacterBaseType(iUnsignedIntegerBaseType):
   def __repr__(oSelf):
     sChar = chr(oSelf.value) if oSelf.value >= 0x20 and oSelf.value < 0x7F else None;
     return "<char %s:%d(%s%s%s) @ 0x%X>" % (
@@ -16,18 +13,6 @@ class iCharacterBaseType(iIntegerBaseType):
     );
   
   @classmethod
-  def fcCreateBufferType(cCharacterType, uLength):
-    global gddcBufferType_by_uLength_by_cCharacterType;
-    assert isinstance(uLength, (int, long)) and uLength >= 0, \
-        "uLength must be a positive integer, not %s" % repr(uLength);
-    dcBufferType_by_uLength = gddcBufferType_by_uLength_by_cCharacterType.setdefault(cCharacterType, {})
-    cBufferType = dcBufferType_by_uLength.get(uLength);
-    if cBufferType is None:
-      cBufferType = cCharacterType[uLength];
-      dcBufferType_by_uLength[uLength] = cBufferType;
-    return cBufferType;
-  
-  @classmethod
   def foCreateBufferFromString(cCharacterType, sData, u0Length = None):
     uLength = u0Length if u0Length is not None else len(sData) + 1;
     assert uLength <= len(sData) + 1, \
@@ -37,8 +22,7 @@ class iCharacterBaseType(iIntegerBaseType):
   
   @classmethod
   def foCreateBufferForLength(cCharacterType, uLength, sData = ""):
-    cBufferType = cCharacterType.fcCreateBufferType(uLength);
-    return cBufferType(sData);
+    return cCharacterType[uLength](sData);
   
   def fxGetValue(oSelf):
     return oSelf.fsGetValue();
@@ -60,14 +44,14 @@ class iCharacterBaseType(iIntegerBaseType):
       "'%s'" % chr(uCharCode) if uCharCode < 0x100 else
       "'\\u%04X'" % uCharCode
     );
-    return "code=%s, char=%s" % (
-      {1:"%02X", 2:"%04X"}[oSelf.__class__.uCharSize] % uCharCode,
-      sChar
-    );
+    sCharCode = {1:"%02X", 2:"%04X"}[oSelf.__class__.uCharSize] % uCharCode;
+    return "%s (%s)" % (sChar, sCharCode);
   
-iCharacterBaseTypeA = iCharacterBaseType.fcCreateType("iCharacterBaseTypeA", ctypes.c_ubyte, 
-  bUnicode = False, sEmptyString = "",  fsValueFromCharCode = chr,    uCharSize = 1,
-);
-iCharacterBaseTypeW = iCharacterBaseType.fcCreateType("iCharacterBaseTypeW", ctypes.c_ushort,
-  bUnicode = True,  sEmptyString = u"", fsValueFromCharCode = unichr, uCharSize = 2,
-);
+  def __repr__(oSelf):
+    return "<character %s (%d-bit @ %s) = %s>" % (
+                       #   #        #     #
+                       oSelf.__class__.sName,
+                           oSelf.__class__.fuGetSize() * 8,
+                                    fsDumpInteger(oSelf.fuGetAddress(), bHexOnly = True),
+                                          oSelf.fsDumpValue(),
+    );

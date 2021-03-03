@@ -1,43 +1,45 @@
 import ctypes;
-from .mPointerBaseTypes import iPointerBaseType32, iPointerBaseType64, iPointerBaseTypeDefault;
-from .mStructureBaseTypes import iStructureBaseType32, iStructureBaseType64, iStructureBaseTypeDefault;
-from .mUnionBaseTypes import iUnionBaseType32, iUnionBaseType64, iUnionBaseTypeDefault;
+from .mPointerTypes import iPointerType32, iPointerType64, iPointerType;
+from .mStructureTypes import iStructureType32, iStructureType64, iStructureType;
+from .mUnionTypes import iUnionType32, iUnionType64, iUnionType;
 from .STRUCT import STRUCT;
 from .UNION import UNION;
-from .mWindowsConstantDefines import *;
-from .mWindowsPrimitiveTypes import *;
+from .mWindowsConstants import *;
+from .mWindowsPrimitives import *;
 
 __all__ = [];
 
 # Export the structure and various types of pointers under common names.
-def fExportStructureOrUnion(iStructureOrUnionBaseType, sName, *atxFields):
-  cType = iStructureOrUnionBaseType.fcCreateType(sName, *atxFields);
-  cpType = iPointerBaseTypeDefault.fcCreateType(cType);
-  for (sName, cType) in {
-              sName: cType,
-       "LP" + sName: cpType,
-        "P" + sName: cpType,
-       "PP" + sName: iPointerBaseTypeDefault.fcCreateType(cpType),
-      "P32" + sName: iPointerBaseType32.fcCreateType(cType),
-      "P64" + sName: iPointerBaseType64.fcCreateType(cType),
+def fExportStructureOrUnion(iStructureOrUnionType, sName, *atxFields):
+  cStructureOrUnion = iStructureOrUnionType.fcCreateClass(sName, *atxFields);
+  cStructureOrUnionPointer = cStructureOrUnion.fcCreatePointer();
+  cStructureOrUnionPointer32 = cStructureOrUnion.fcCreatePointer32();
+  cStructureOrUnionPointer64 = cStructureOrUnion.fcCreatePointer64();
+  for (sName, cStructureOrUnionOrPointer) in {
+              sName: cStructureOrUnion,
+       "LP" + sName: cStructureOrUnionPointer,
+        "P" + sName: cStructureOrUnionPointer,
+       "PP" + sName: cStructureOrUnionPointer.fcCreatePointer(),
+      "P32" + sName: cStructureOrUnionPointer32,
+      "P64" + sName: cStructureOrUnionPointer64,
   }.items():
-    globals()[sName] = cType; # Make it available in the context of this file
+    globals()[sName] = cStructureOrUnionOrPointer; # Make it available in the context of this file
     __all__.append(sName); # Make it available as an export from this module.
 
 def fExportStructure(sName, *atxFields):
-  fExportStructureOrUnion(iStructureBaseTypeDefault, sName, *atxFields);
+  fExportStructureOrUnion(iStructureType, sName, *atxFields);
 def fExportStructure32(sName, *atxFields):
-  fExportStructureOrUnion(iStructureBaseType32, sName, *atxFields);
+  fExportStructureOrUnion(iStructureType32, sName, *atxFields);
 def fExportStructure64(sName, *atxFields):
-  fExportStructureOrUnion(iStructureBaseType64, sName, *atxFields);
+  fExportStructureOrUnion(iStructureType64, sName, *atxFields);
 def fDefineUnion(sName, *atxFields):
-  fExportStructureOrUnion(iUnionBaseTypeDefault, sName, *atxFields);
+  fExportStructureOrUnion(iUnionType, sName, *atxFields);
 
 def fExportAlias(sName, cType):
   globals()[sName] = cType; # Make it available in the context of this file
   __all__.append(sName); # Make it available as an export from this module.
-def fExportPointer(sName, cTargetType):
-  cType = iPointerBaseTypeDefault.fcCreateType(cTargetType);
+def fExportPointer(sName, cTarget):
+  cType = cTarget.fcCreatePointer();
   globals()[sName] = cType; # Make it available in the context of this file
   __all__.append(sName); # Make it available as an export from this module.
 
