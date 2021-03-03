@@ -26,6 +26,21 @@ class iPrimitiveBaseType(iBaseType):
   
   def fsDumpValue(oSelf):
     raise NotImplementedError("%s has not implemented fsDumpValue!" % oSelf.__class__.__name__);
+
+  def fsDumpFlags(oSelf, duFlagValue_by_sName):
+    uValue = oSelf.fuGetValue();
+    if uValue == 0:
+      return "None";
+    asFlags = [];
+    uKnownFlags = 0;
+    for (sFlagName, uFlagValue) in duFlagValue_by_sName.items():
+      if uValue & uFlagValue:
+        asFlags.append(sFlagName);
+      uKnownFlags |= uFlagValue;
+    uUnknownFlags = (uValue | uKnownFlags) - uKnownFlags;
+    if uUnknownFlags:
+      asFlags.append("0x%X" % uUnknownFlags);
+    return " | ".join(asFlags);   
   
   def fasDump(oSelf, s0Name = None, uOffset = 0, sPadding = "", bOutputHeader = True):
     sName = s0Name if s0Name is not None else "%s @ 0x%X" % (oSelf.__class__.sName, oSelf.fuGetAddress());
