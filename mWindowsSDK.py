@@ -75,6 +75,7 @@ __all__ = [
   "iBooleanBaseType",
   "iCharacterBaseType",
   "iFloatingPointBaseType",
+  "iIntegerBaseType",
   "iPointerBaseType",
   "iSignedIntegerBaseType",
   "iStructureBaseType",
