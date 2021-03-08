@@ -139,14 +139,15 @@ class iPointerBaseType(iUnsignedIntegerBaseType):
     return "NULL" if uTargetAddress == 0 else fsDumpInteger(uTargetAddress, bHexOnly = True);
   
   def __repr__(oSelf):
-    return "<pointer %s (%d-bit @ %s) =%s=> %s @ %s>" % (
+    return "<pointer %s (%d-bit @ %s) =%s=> %s%s @ %s>" % (
                      #   #        #    #    #    #
                      oSelf.__class__.sName,
                          oSelf.__class__.fuGetSize() * 8,
                                   fsDumpInteger(oSelf.fuGetAddress(), bHexOnly = True),
                                        "weak" if oSelf.o0HardLinkedTarget is None else "strong",
                                             oSelf.__class__.c0TargetClass.sName if oSelf.__class__.c0TargetClass else "VOID",
-                                                 oSelf.fsDumpValue(),
+                                              "(%s)" % repr(oSelf.o0HardLinkedTarget) if oSelf.o0HardLinkedTarget is not None else "",
+                                                   oSelf.fsDumpValue(),
     );
 
 from .iBaseType import iBaseType;
