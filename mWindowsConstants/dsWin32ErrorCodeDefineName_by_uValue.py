@@ -3375,9 +3375,3 @@ dsWin32ErrorCodeDefineName_by_uValue = {
   0x3DF8: "STORE_ERROR_LICENSE_REVOKED",
 # `---
 };
-
-dx = {
-}
-for uValue in sorted(dx.keys()):
-  if uValue not in dsWin32ErrorCodeDefineName_by_uValue:
-    print "  0x%04X: \"%s\"," % (uValue, dx[uValue]);
