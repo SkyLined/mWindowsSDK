@@ -38,10 +38,6 @@ def fDefineUnion(sName, *atxFields):
 def fExportAlias(sName, cType):
   globals()[sName] = cType; # Make it available in the context of this file
   __all__.append(sName); # Make it available as an export from this module.
-def fExportPointer(sName, cTarget):
-  cType = cTarget.fcCreatePointer();
-  globals()[sName] = cType; # Make it available in the context of this file
-  __all__.append(sName); # Make it available as an export from this module.
 
 ################################################################################
 # Simple structures that contain only primitives and no other structures are   #
@@ -113,18 +109,6 @@ fExportStructure("FILETIME",
   (DWORD,       "dwLowDateTime"),
   (DWORD,       "dwHighDateTime"),
 );
-#GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
-fExportStructure("GUID",
-  (DWORD,       "Data1"),
-  (WORD,        "Data2"),
-  (WORD,        "Data3"),
-  (BYTE[8],     "Data4"),
-);
-fExportPointer("REFGUID", GUID);
-fExportAlias("CLSID", GUID);
-fExportPointer("REFCLSID", CLSID);
-fExportAlias("IID", GUID);
-fExportPointer("REFIID", IID);
 #IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 fExportStructure("IMAGE_DATA_DIRECTORY",
   (DWORD,       "VirtualAddress"),
@@ -617,20 +601,6 @@ fExportStructure("THREADENTRY32",
   (LONG,        "tpBasePri"),
   (LONG,        "tpDeltaPri"),
   (DWORD,       "dwFlags"),
-);
-#WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-fExportStructure("WINHTTP_AUTOPROXY_OPTIONS",
-  (DWORD,       "dwFlags"),
-  (DWORD,       "dwAutoDetectFlags"),
-  (LPCWSTR,     "lpszAutoConfigUrl"),
-  (LPVOID,      "lpvReserved"),
-  (DWORD,       "dwReserved"),
-  (BOOL,        "fAutoLogonIfChallenged"),
-);
-fExportStructure("WINHTTP_PROXY_INFO",
-  (DWORD,       "dwAccessType"),
-  (LPWSTR,      "lpszProxy"),
-  (LPWSTR,      "lpszProxyBypass"),
 );
 ################################################################################
 # Structures that contain or refer to other structures                         #

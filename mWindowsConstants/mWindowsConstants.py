@@ -3,22 +3,12 @@ import ctypes, struct;
 # I've started to group some defines that have unique values within a certain
 # context and store them in dictionaries in separate files for clarity.
 # These dictionaries are imported here and their names and values extracted:
-from dsHResultDefineName_by_uValue import dsHResultDefineName_by_uValue;
-from dsExceptionDefineName_by_uValue import dsExceptionDefineName_by_uValue;
-from dsNTStatusDefineName_by_uValue import dsNTStatusDefineName_by_uValue;
-from dsWin32ErrorCodeDefineName_by_uValue import dsWin32ErrorCodeDefineName_by_uValue;
-
+from .dsHResultDefineName_by_uValue import dsHResultDefineName_by_uValue;
+from .dsExceptionDefineName_by_uValue import dsExceptionDefineName_by_uValue;
+from .dsNTStatusDefineName_by_uValue import dsNTStatusDefineName_by_uValue;
+from .dsWin32ErrorCodeDefineName_by_uValue import dsWin32ErrorCodeDefineName_by_uValue;
 dxGlobals = globals();
-for dsDefineName_by_uValue in (
-  dsHResultDefineName_by_uValue,
-  dsExceptionDefineName_by_uValue,
-  dsNTStatusDefineName_by_uValue,
-  dsWin32ErrorCodeDefineName_by_uValue,
-):
-  for (uValue, sName) in dsDefineName_by_uValue.items():
-    assert dxGlobals.get(sName) in (uValue, None), \
-        "#define %s 0x%X *and* 0x%X!?" % (sName, uValue, duDefineValue_by_sName[sName]);
-    dxGlobals[sName] = uValue;
+asOriginalGlobalsNames = dxGlobals.keys();
 
 ################################################################################
 # Non-numeric defines
@@ -676,30 +666,26 @@ WAIT_OBJECT_61                          =         61;
 WAIT_OBJECT_62                          =         62;
 WAIT_OBJECT_63                          =         63;
 WAIT_TIMEOUT                            = 0x00000102;
-WINHTTP_ACCESS_TYPE_DEFAULT_PROXY       =          0;
-WINHTTP_ACCESS_TYPE_NO_PROXY            =          1;
-WINHTTP_ACCESS_TYPE_NAMED_PROXY         =          3;
-WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY     =          4;
-WINHTTP_AUTO_DETECT_TYPE_DHCP           = 0x00000001;
-WINHTTP_AUTO_DETECT_TYPE_DNS_A          = 0x00000002;
-# Some of this comes from https://github.com/wine-mirror/wine/blob/master/include/winhttp.h
-WINHTTP_AUTOPROXY_ALLOW_AUTOCONFIG      = 0x00000100;
-WINHTTP_AUTOPROXY_ALLOW_CM              = 0x00000400;
-WINHTTP_AUTOPROXY_ALLOW_STATIC          = 0x00000200;
-WINHTTP_AUTOPROXY_AUTO_DETECT           = 0x00000001;
-WINHTTP_AUTOPROXY_CONFIG_URL            = 0x00000002;
-WINHTTP_AUTOPROXY_HOST_KEEPCASE         = 0x00000004;
-WINHTTP_AUTOPROXY_HOST_LOWERCASE        = 0x00000008;
-WINHTTP_AUTOPROXY_NO_CACHE_CLIENT       = 0x00080000;
-WINHTTP_AUTOPROXY_NO_CACHE_SVC          = 0x00100000;
-WINHTTP_AUTOPROXY_NO_DIRECTACCESS       = 0x00040000;
-WINHTTP_AUTOPROXY_RUN_INPROCESS         = 0x00010000;
-WINHTTP_AUTOPROXY_RUN_OUTPROCESS_ONLY   = 0x00020000;
-WINHTTP_AUTOPROXY_SORT_RESULTS          = 0x00400000;
-WINHTTP_NO_PROXY_NAME                   =       NULL;
-WINHTTP_NO_PROXY_BYPASS                 =       NULL;
 WPF_SETMINPOSITION                      =     0x0001;
 WPF_RESTORETOMAXIMIZED                  =     0x0002;
 WPF_ASYNCWINDOWPLACEMENT                =     0x0004;
 WRITE_DAC                               = 0x00040000;
 WRITE_OWNER                             = 0x00080000;
+
+# __all__ has all globals that we added in the code above.
+__all__ = [
+  sGlobalsName for sGlobalsName in dxGlobals.keys()
+  if sGlobalsName not in asOriginalGlobalsNames
+];
+# Add all defines from the various sub-modules
+for dsDefineName_by_uValue in (
+  dsHResultDefineName_by_uValue,
+  dsExceptionDefineName_by_uValue,
+  dsNTStatusDefineName_by_uValue,
+  dsWin32ErrorCodeDefineName_by_uValue,
+):
+  for (uValue, sName) in dsDefineName_by_uValue.items():
+    assert sName not in dxGlobals or dxGlobals[sName] == uValue, \
+        "#define %s 0x%X *and* 0x%X!?" % (sName, uValue, duDefineValue_by_sName[sName]);
+    dxGlobals[sName] = uValue;
+    __all__.append(sName);

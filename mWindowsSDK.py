@@ -39,16 +39,8 @@ from .mUnionTypes import \
 
 from .fsGetStringAtAddress import fsGetStringAtAddress;
 
-from .foParseGUID import foParseGUID;
-
 from .STRUCT import STRUCT;
 from .UNION import UNION;
-
-from . import mWindowsMacros;
-from . import mWindowsConstants;
-from . import mWindowsPrimitives;
-from . import mWindowsStructures;
-from . import mWindowsGUIDs;
 
 from .cDLL import cDLL;
 
@@ -56,9 +48,7 @@ from .foLoadAdvAPI32DLL import foLoadAdvAPI32DLL;
 from .foLoadDbgHelpDLL import foLoadDbgHelpDLL;
 from .foLoadKernel32DLL import foLoadKernel32DLL;
 from .foLoadNTDLL import foLoadNTDLL;
-from .foLoadOle32DLL import foLoadOle32DLL;
 from .foLoadUser32DLL import foLoadUser32DLL;
-from .foLoadWinHTTPDLL import foLoadWinHTTPDLL;
 
 from .fs0GetHResultDefineName import fs0GetHResultDefineName;
 from .fsGetHResultDescription import fsGetHResultDescription;
@@ -121,16 +111,17 @@ __all__ = [
   "cVoidPointer",
   "cVoidPointer32",
   "cVoidPointer64",
+  # Structure/Union helper classes
+  "STRUCT",
+  "UNION",
   # DLL base class
   "cDLL",
   
-  # Miscelanious stuff
+  # Miscellaneous stuff
   "fsGetStringAtAddress",
   
-  "foParseGUID",
   # Windows specific stuff
   "mWindowsConstants",
-  "mWindowsGUIDs",
   "mWindowsMacros",
   "mWindowsPrimitives",
   "mWindowsStructures",
@@ -139,9 +130,7 @@ __all__ = [
   "foLoadDbgHelpDLL",
   "foLoadKernel32DLL",
   "foLoadNTDLL",
-  "foLoadOle32DLL",
   "foLoadUser32DLL",
-  "foLoadWinHTTPDLL",
   
   "fs0GetHResultDefineName",
   "fsGetHResultDescription",
@@ -152,9 +141,16 @@ __all__ = [
   "fs0GetExceptionDefineName",
   "fsGetExceptionDescription",
 ];
-
-for mModule in (mWindowsConstants, mWindowsGUIDs, mWindowsMacros, mWindowsPrimitives, mWindowsStructures):
-  for sName in dir(mModule):
-    if sName[0] != "_":
-      globals()[sName] = getattr(mModule, sName);
-      __all__.append(sName);
+dsSourceModuleName_by_sExportName = {};
+for sModuleName in ("mWindowsConstants", "mWindowsMacros", "mWindowsPrimitives", "mWindowsStructures"):
+  mModule = __import__(sModuleName, globals(), {}, None, -1);
+  globals()[sModuleName] = mModule;
+  __all__.append(sModuleName);
+  assert hasattr(mModule, "__all__"), \
+      "%s does not have an __all__ list defined!" % sModuleName;
+  for sExportName in mModule.__all__:
+    assert sExportName not in __all__, \
+        "Cannot define %s twice in %s and %s!" % (sExportName, dsSourceModuleName_by_sExportName.get(sExportName, "<module>"), sModuleName);
+    globals()[sExportName] = getattr(mModule, sExportName);
+    __all__.append(sExportName);
+    dsSourceModuleName_by_sExportName[sExportName] = sModuleName;

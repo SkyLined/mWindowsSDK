@@ -24,7 +24,6 @@ di0BaseType_by_sName = {
   "BYTE":     cUnsignedInteger8,
   #CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
   "CHAR":     cCharacterA,
-  "COLESTR":  cCharacterW, # Used to create LPCOLESTR etc.
   "CSTR":     cCharacterA, # Used to create LPCSTR etc.
   "CVOID":    None, # Used to create LPCVOID etc.
   "CWSTR":    cCharacterW, # Used to create LPCWSTR etc.
@@ -49,7 +48,6 @@ di0BaseType_by_sName = {
   "HHOOK":    cVoidPointer,
   "HICON":    cVoidPointer,
   "HINSTANCE": cVoidPointer,
-  "HINTERNET": cVoidPointer,
   "HKEY":     cVoidPointer,
   "HKL":      cVoidPointer,
   "HLOCAL":   cVoidPointer,
@@ -83,7 +81,6 @@ di0BaseType_by_sName = {
   #NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
   "NTSTATUS": cSignedInteger32,
   #OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-  "OLESTR":   cCharacterW, # Used to create LPOLESTR etc.
   #PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
   "PROCESSINFOCLASS": cUnsignedInteger, # defined as an enum, so I'm guessing its size depends on the architecture.
   "POINTER_32": cVoidPointer32,
@@ -106,7 +103,6 @@ di0BaseType_by_sName = {
   "UINT64":   cUnsignedInteger64,
   "ULONG":    cUnsignedInteger32,
   "ULONGLONG": cUnsignedInteger64,
-  "UNKNOWN":  None, # Used to create LPUNKNOWN (Which should be IUknown*)
   "USHORT":   cUnsignedInteger16,
   #VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
   "VOID":     None, # Used to create PVOID etc.

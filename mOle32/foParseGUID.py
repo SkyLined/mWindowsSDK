@@ -12,12 +12,12 @@ rGUID = re.compile((
   r"\}$"
 ), re.I);
 
-def foParseGUID(sGUID):
+def foParseGUID(sGUID, cClass = GUID):
   oGUIDMatch = rGUID.match(sGUID);
   if not oGUIDMatch: return None;
   sData1, sData2, sData3, sData4_1, sData4_2 = oGUIDMatch.groups();
   sData4 = sData4_1 + sData4_2;
-  return GUID(
+  return cClass(
     long(sData1, 16),
     long(sData2, 16),
     long(sData3, 16),
