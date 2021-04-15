@@ -112,6 +112,10 @@ def foLoadKernel32DLL():
         "GetProcessHeap": {
           "xReturnType": HANDLE,
         },
+        "GetProcessTimes": {
+          "txArgumentTypes": (HANDLE, LPFILETIME, LPFILETIME, LPFILETIME, LPFILETIME),
+          "xReturnType": BOOL,
+        },
         "GetShortPathNameA": {
           "xReturnType": DWORD,
           "txArgumentTypes": (LPCSTR, LPSTR, DWORD),
