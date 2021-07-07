@@ -8,7 +8,7 @@ from .dsExceptionDefineName_by_uValue import dsExceptionDefineName_by_uValue;
 from .dsNTStatusDefineName_by_uValue import dsNTStatusDefineName_by_uValue;
 from .dsWin32ErrorCodeDefineName_by_uValue import dsWin32ErrorCodeDefineName_by_uValue;
 dxGlobals = globals();
-asOriginalGlobalsNames = dxGlobals.keys();
+asOriginalGlobalsNames = list(dxGlobals.keys());
 
 ################################################################################
 # Non-numeric defines
@@ -492,20 +492,20 @@ STILL_ACTIVE                            =      0x103;
 STD_ERROR_HANDLE                        =        -12;
 STD_INPUT_HANDLE                        =        -10;
 STD_OUTPUT_HANDLE                       =        -11;
-def STOWED_EXCEPTION_INFORMATION_SIGNATURE(sSignature):
+def STOWED_EXCEPTION_INFORMATION_SIGNATURE(sbSignature):
   # This is not actually defined by Windows, but I needed to name this function so I named it similar to
   # STOWED_EXCEPTION_NESTED_TYPE
- return struct.unpack(">L", sSignature)[0]; 
-STOWED_EXCEPTION_INFORMATION_V1_SIGNATURE = STOWED_EXCEPTION_INFORMATION_SIGNATURE("SE01");
-STOWED_EXCEPTION_INFORMATION_V2_SIGNATURE = STOWED_EXCEPTION_INFORMATION_SIGNATURE("SE02");
-def STOWED_EXCEPTION_NESTED_TYPE(sType):
- return struct.unpack("<L", sType)[0]; 
+ return struct.unpack(">L", sbSignature)[0]; 
+STOWED_EXCEPTION_INFORMATION_V1_SIGNATURE = STOWED_EXCEPTION_INFORMATION_SIGNATURE(b"SE01");
+STOWED_EXCEPTION_INFORMATION_V2_SIGNATURE = STOWED_EXCEPTION_INFORMATION_SIGNATURE(b"SE02");
+def STOWED_EXCEPTION_NESTED_TYPE(sbType):
+ return struct.unpack("<L", sbType)[0]; 
 STOWED_EXCEPTION_NESTED_TYPE_NONE       = 0x00000000;
-STOWED_EXCEPTION_NESTED_TYPE_WIN32      = STOWED_EXCEPTION_NESTED_TYPE("W32E");
-STOWED_EXCEPTION_NESTED_TYPE_STOWED     = STOWED_EXCEPTION_NESTED_TYPE("STOW");
-STOWED_EXCEPTION_NESTED_TYPE_CLR        = STOWED_EXCEPTION_NESTED_TYPE("CLR1");
-STOWED_EXCEPTION_NESTED_TYPE_LEO        = STOWED_EXCEPTION_NESTED_TYPE("LEO1");
-STOWED_EXCEPTION_NESTED_TYPE_LMAX       = STOWED_EXCEPTION_NESTED_TYPE("LMAX"); # Undocumented, reversed from detected exceptions.
+STOWED_EXCEPTION_NESTED_TYPE_WIN32      = STOWED_EXCEPTION_NESTED_TYPE(b"W32E");
+STOWED_EXCEPTION_NESTED_TYPE_STOWED     = STOWED_EXCEPTION_NESTED_TYPE(b"STOW");
+STOWED_EXCEPTION_NESTED_TYPE_CLR        = STOWED_EXCEPTION_NESTED_TYPE(b"CLR1");
+STOWED_EXCEPTION_NESTED_TYPE_LEO        = STOWED_EXCEPTION_NESTED_TYPE(b"LEO1");
+STOWED_EXCEPTION_NESTED_TYPE_LMAX       = STOWED_EXCEPTION_NESTED_TYPE(b"LMAX"); # Undocumented, reversed from detected exceptions.
 SYNCHRONIZE                             = 0x00100000;
 # From https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa
 SW_HIDE                                 = 0x00000000;

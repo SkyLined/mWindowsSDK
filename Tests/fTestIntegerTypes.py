@@ -13,7 +13,7 @@ def fTestIntegerTypes(oConsole):
   assert UINT8(1)+2 == INT8(3), "FAILED!";
   
   assert UINT8(1)-UINT8(2) == -1, "FAILED!";
-  assert 1-UINT8(2) == -1, "FAILED!";
+  assert 1-UINT8(2) == -1, "FAILED: 1 - %s == %s (%d)!" % (repr(UINT8(2)), repr(1-UINT8(2)), int(1-UINT8(2)));
   assert UINT8(1)-2 == -1, "FAILED!";
   
   assert UINT8(1)-2 == INT8(-1), "FAILED!";

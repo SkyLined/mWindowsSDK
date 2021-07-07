@@ -13,25 +13,28 @@ class iCharacterBaseType(iUnsignedIntegerBaseType):
     );
   
   @classmethod
-  def foCreateBufferFromString(cCharacterType, sData, u0Length = None):
-    uLength = u0Length if u0Length is not None else len(sData) + 1;
-    assert uLength <= len(sData) + 1, \
+  def foCreateBufferFromString(cCharacterType, sxData, u0Length = None):
+    uLength = u0Length if u0Length is not None else len(sxData) + 1;
+    assert uLength <= len(sxData) + 1, \
         "You cannot create a buffer of %d characters to store a string of %d characters (%s)" % \
-        (uLength, len(sData), repr(sData));
-    return cCharacterType.foCreateBufferForLength(uLength, sData);
+        (uLength, len(sxData), repr(sxData));
+    return cCharacterType.foCreateBufferForLength(uLength, sxData);
   
   @classmethod
-  def foCreateBufferForLength(cCharacterType, uLength, sData = ""):
-    return cCharacterType[uLength](sData);
+  def foCreateBufferForLength(cCharacterType, uLength, sxData = b""):
+    return cCharacterType[uLength](sxData);
   
   def fxGetValue(oSelf):
     return oSelf.fsGetValue();
   
   def fsGetValue(oSelf):
-    return oSelf.__class__.fsValueFromCharCode(oSelf.fuGetValue());
+    return chr(oSelf.fuGetValue());
+  
+  def fsbGetValue(oSelf):
+    return bytes((oSelf.fuGetValue()),);
   
   def fSetValue(oSelf, xValue):
-    if isinstance(xValue, (str, unicode)):
+    if isinstance(xValue, str):
       xValue = ord(xValue);
     super(iCharacterBaseType, oSelf).fSetValue(xValue);
   

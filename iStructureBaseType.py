@@ -9,8 +9,8 @@ class tCreateArrayMetaType(object):
   def __getitem__(cSelf, uIndex):
     return iArrayBaseType.fcCreateClass(cSelf, uIndex);
 
-class iStructureBaseType(iStructureOrUnionBaseType, ctypes.Structure):
-  __metaclass__ = type("iStructureMetaType", (tCreateArrayMetaType, cCTypesStructureMetaType), {});
+class iStructureBaseType(iStructureOrUnionBaseType, ctypes.Structure, metaclass=type("iStructureMetaType", (tCreateArrayMetaType, cCTypesStructureMetaType), {})):
+  
   bIsStructure = True;
   bIsUnion = False;
 

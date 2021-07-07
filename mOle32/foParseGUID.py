@@ -18,8 +18,8 @@ def foParseGUID(sGUID, cClass = GUID):
   sData1, sData2, sData3, sData4_1, sData4_2 = oGUIDMatch.groups();
   sData4 = sData4_1 + sData4_2;
   return cClass(
-    long(sData1, 16),
-    long(sData2, 16),
-    long(sData3, 16),
-    BYTE[8](*[long(sData4[uIndex:uIndex+2], 16) for uIndex in xrange(0, len(sData4), 2)])
+    int(sData1, 16),
+    int(sData2, 16),
+    int(sData3, 16),
+    BYTE[8](*[int(sData4[uIndex:uIndex+2], 16) for uIndex in range(0, len(sData4), 2)])
   );

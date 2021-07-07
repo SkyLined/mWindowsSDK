@@ -1,3 +1,5 @@
+import importlib;
+
 from .iArrayBaseType import iArrayBaseType;
 from .iCharacterBaseType import iCharacterBaseType;
 from .mCharacterClasses import \
@@ -143,7 +145,7 @@ __all__ = [
 ];
 dsSourceModuleName_by_sExportName = {};
 for sModuleName in ("mWindowsConstants", "mWindowsMacros", "mWindowsPrimitives", "mWindowsStructures"):
-  mModule = __import__(sModuleName, globals(), {}, None, -1);
+  mModule = importlib.import_module(".%s" % sModuleName, "mWindowsSDK");
   globals()[sModuleName] = mModule;
   __all__.append(sModuleName);
   assert hasattr(mModule, "__all__"), \

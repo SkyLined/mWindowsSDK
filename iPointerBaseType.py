@@ -56,13 +56,13 @@ class iPointerBaseType(iUnsignedIntegerBaseType):
     # 4) Any instance of a class derived from `iBaseType`, which creates a pointer to the address at which this
     #    instance is stored in memory. The instance is also stored in the `o0HardLinkedTarget` property to avoid it being
     #    freed while the pointer exists.
-    if oTarget_sString_or_u0Address is None or isinstance(oTarget_sString_or_u0Address, (int, long)):
+    if oTarget_sString_or_u0Address is None or isinstance(oTarget_sString_or_u0Address, int):
       uAddress = oTarget_sString_or_u0Address or 0;
     else:
-      if isinstance(oTarget_sString_or_u0Address, (str, unicode)):
-        # Create a copy of the string as a buffer (an array of characters), including a 0 terminator. Then use that
-        # buffer as if it was provided as the target: save it in the `o0HardLinkedTarget` property and use its address
-        # for the pointer.
+      if isinstance(oTarget_sString_or_u0Address, (str, bytes)):
+        # Create a copy of the (byte) string as a buffer (an array of bytes/characters), including a 0 terminator. Then
+        # use that buffer as if it was provided as the target: save it in the `o0HardLinkedTarget` property and use its
+        # address for the pointer.
         cCharacterType = oSelf.__class__.c0TargetClass;
         assert issubclass(cCharacterType, iCharacterBaseType), \
             "Cannot create a %s from %s, as it does not a pointer to a character type." % \
@@ -116,7 +116,7 @@ class iPointerBaseType(iUnsignedIntegerBaseType):
   def fsGetValue(oSelf, u0MaxLength = None):
     assert oSelf.__class__.c0TargetClass is not None and issubclass(oSelf.__class__.c0TargetClass, iCharacterBaseType), \
         "Cannot get a string for %s" % oSelf.__class__.sName;
-    sData = oSelf.__class__.c0TargetClass.sEmptyString;
+    sData = "";
     uAddress = oSelf.fuGetTargetAddress();
     while u0MaxLength is None or u0MaxLength > 0:
       oChar = oSelf.__class__.c0TargetClass.from_address(uAddress);

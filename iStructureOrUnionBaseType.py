@@ -23,7 +23,7 @@ class iStructureOrUnionBaseType(iBaseType):
           cFieldClass = xField[0];
           assert issubclass(cFieldClass, iBaseType), \
               "FieldType for %s must be a type, not %s" % (sName, repr(cFieldClass));
-          for uIndex in xrange(1, len(xField), 2):
+          for uIndex in range(1, len(xField), 2):
             s0FieldName = xField[uIndex];
             if s0FieldName is None:
               sFieldName = "_anonymous_field_%d_" % len(asAnonymousFieldNames);
@@ -33,7 +33,7 @@ class iStructureOrUnionBaseType(iBaseType):
             uFieldSizeInBits = xField[uIndex + 1];
             assert isinstance(sFieldName, str), \
                 "FieldName for %s must be a string, not %s" % (sName, repr(sFieldName));
-            assert isinstance(uFieldSizeInBits, (int, long)) and uFieldSizeInBits > 0, \
+            assert isinstance(uFieldSizeInBits, int) and uFieldSizeInBits > 0, \
                 "uFieldSizeInBits for %s must be a positive integer larger than zero, not %s" % (sName, repr(uFieldSizeInBits));
             atxFields.append((sFieldName, cFieldClass, uFieldSizeInBits));
           continue;
@@ -44,8 +44,8 @@ class iStructureOrUnionBaseType(iBaseType):
         asAnonymousFieldNames.append(sFieldName);
       from .STRUCT import STRUCT;
       from .UNION import UNION;
-      from mStructureTypes import iStructureType32, iStructureType64;
-      from mUnionTypes import iUnionType32, iUnionType64;
+      from .mStructureTypes import iStructureType32, iStructureType64;
+      from .mUnionTypes import iUnionType32, iUnionType64;
       if cFieldClass.__class__ in (STRUCT, UNION):
         iFieldType = {
           STRUCT: {32: iStructureType32, 64: iStructureType64},
@@ -72,7 +72,7 @@ class iStructureOrUnionBaseType(iBaseType):
     return getattr(cSelf, sFieldName).offset;
   
   def fasDump(oSelf, s0Name = None, uOffset = 0, sPadding = "", bOutputHeader = True):
-    sName = s0Name if s0Name is not None else "%s @ 0x%X" % (oSelf.__class__.sName, oSelf.fuGetAddress());
+    sName = s0Name if s0Name is not None else "@ 0x%X" % (oSelf.fuGetAddress(),);
     return  (
       (_fasGetDumpHeader() if bOutputHeader else []) +
       [_fsFormatDumpLine(
@@ -89,7 +89,7 @@ class iStructureOrUnionBaseType(iBaseType):
   
   def fasDumpContent(oSelf, uOffset = 0, sPadding = ""):
     asDumpData = [];
-    for uMemberIndex in xrange(len(oSelf._fields_)):
+    for uMemberIndex in range(len(oSelf._fields_)):
       xMember = oSelf._fields_[uMemberIndex];
       if len(xMember) == 2:
         (sMemberName, cMemberType) = xMember;

@@ -13,12 +13,12 @@ def fTestCharacterTypes(oConsole):
   
   WCHARx8 = cCharacterW[8];
   oBuffer = WCHARx8("....");
-  oBuffer[1].fSetValue(u"X");
-  oBuffer[5].fSetValue(u"\u1234");
-  fCheckArray(oBuffer, u".X..\0\u1234\0\0");
+  oBuffer[1].fSetValue("X");
+  oBuffer[5].fSetValue("\u1234");
+  fCheckArray(oBuffer, ".X..\0\u1234\0\0");
   
   oBuffer.fClear();
-  fCheckArray(oBuffer, u"\0" * 8);
+  fCheckArray(oBuffer, "\0" * 8);
 
   try:
     oOOB = oBuffer[8];
@@ -29,4 +29,4 @@ def fTestCharacterTypes(oConsole):
   
   cBufferTypeW = cCharacterW.fcCreatePointer();
   oBuffer = cBufferTypeW("Test");
-  fCheckPointer(oBuffer, u"Test");
+  fCheckPointer(oBuffer, "Test");

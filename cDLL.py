@@ -21,7 +21,7 @@ class cDLLFunction(object):
     oSelf.xReturnType = xReturnType;
     oSelf.sName = sFunctionName;
     oSelf.txArgumentTypes = txArgumentTypes;
-    for uArgumentIndex in xrange(len(txArgumentTypes)):
+    for uArgumentIndex in range(len(txArgumentTypes)):
       xArgumentType = txArgumentTypes[uArgumentIndex];
       assert inspect.isclass(xArgumentType) and issubclass(xArgumentType, iPrimitiveBaseType), (
         "You are trying to define `%s`, `function %s()` with %s as the type of argument #%d.\n" + \
@@ -34,7 +34,7 @@ class cDLLFunction(object):
     try:
       fxBasicFunctionWrapper = ffxFunctionConstructor(
         (sFunctionName, oWinDLL),
-        tuple([(1, "p%d" % u, 0) for u in xrange(len(oSelf.txArgumentTypes))])
+        tuple([(1, "p%d" % u, 0) for u in range(len(oSelf.txArgumentTypes))])
       );
     except AttributeError as oException:
       # The DLL does not implement this function.
@@ -58,10 +58,10 @@ class cDLLFunction(object):
       xReturnValue = oSelf.__fFunctionWrapper(*txArguments);
     except ctypes.ArgumentError as oException:
       oArgumentNumberMatch = re.match(r"argument (\d+):.*", oException.message);
-      u0WrongArgumentIndex = oArgumentNumberMatch and long(oArgumentNumberMatch.group(1)) - 1;
-      print "*" * 80;
-      print "* Invalid arguments passed to %s.%s():" % (oSelf.sDLLName, oSelf.sName);
-      for uArgumentIndex in xrange(len(txArguments)):
+      u0WrongArgumentIndex = oArgumentNumberMatch and int(oArgumentNumberMatch.group(1)) - 1;
+      print(("*" * 80));
+      print(("* Invalid arguments passed to %s.%s():" % (oSelf.sDLLName, oSelf.sName)));
+      for uArgumentIndex in range(len(txArguments)):
         xArgument = txArguments[uArgumentIndex];
         xExpectedArgumentType = oSelf.txArgumentTypes[uArgumentIndex];
         if (
@@ -69,13 +69,13 @@ class cDLLFunction(object):
             if u0WrongArgumentIndex is None else
           uArgumentIndex == u0WrongArgumentIndex
         ):
-          print "- Argument %d is %s (%s), which %s correct." % \
-              (uArgumentIndex + 1, repr(xArgument.__class__), repr(xArgument), "may not be" if u0WrongArgumentIndex is None else "is not");
-          print "  Expected type = %s." % (repr(xExpectedArgumentType),);
+          print(("- Argument %d is %s (%s), which %s correct." % \
+              (uArgumentIndex + 1, repr(xArgument.__class__), repr(xArgument), "may not be" if u0WrongArgumentIndex is None else "is not")));
+          print(("  Expected type = %s." % (repr(xExpectedArgumentType),)));
         else:
-          print "+ Argument %d is %s (%s) as expected." % \
-              (uArgumentIndex + 1, repr(xArgument.__class__), repr(xArgument));
-      print "*" * 80;
+          print(("+ Argument %d is %s (%s) as expected." % \
+              (uArgumentIndex + 1, repr(xArgument.__class__), repr(xArgument))));
+      print(("*" * 80));
       raise;
     if oSelf.xReturnType is not None:
       assert type(xReturnValue) == oSelf.xReturnType, \

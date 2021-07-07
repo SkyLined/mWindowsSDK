@@ -19,14 +19,14 @@ class iBaseType(object):
   def fClear(oSelf):
     uSize = oSelf.fuGetSize();
     aoBYTEs = (ctypes.c_byte * uSize).from_address(oSelf.fuGetAddress());
-    for uOffset in xrange(uSize):
+    for uOffset in range(uSize):
       aoBYTEs[uOffset] = 0;
   
-  def fsGetBytes(oSelf):
-    return ctypes.string_at(oSelf.fuGetAddress(), oSelf.fuGetSize())[:]; # return a copy
+  def fsbGetBytes(oSelf):
+    return bytes(ctypes.string_at(oSelf.fuGetAddress(), oSelf.fuGetSize()));
   
   def fauGetBytes(oSelf):
-    return [ord(sByte) for sByte in ctypes.string_at(oSelf.fuGetAddress(), oSelf.fuGetSize())];
+    return ctypes.string_at(oSelf.fuGetAddress(), oSelf.fuGetSize());
   
   @classmethod
   def fcCreatePointer32(cSelf):
@@ -41,7 +41,7 @@ class iBaseType(object):
     return iPointerType64.fcCreateSubClassForTargetType(cSelf);
   def foCreatePointer64(oSelf):
     return oSelf.__class__.fcCreatePointer64()(oSelf);
-
+  
   @classmethod
   def fcCreatePointer(cSelf):
     from .mPointerTypes import iPointerType;

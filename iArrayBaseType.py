@@ -12,17 +12,17 @@ class tCreateArrayMetaType(object):
   def __getitem__(cSelf, uIndex):
     return iArrayBaseType.fcCreateClass(cSelf, uIndex);
 
-class iArrayBaseType(iBaseType, ctypes.Array):
+class iArrayBaseType(iBaseType, ctypes.Array, metaclass=type("iArrayMetaType", (tCreateArrayMetaType, cCTypesArrayMetaType), {})):
   _type_ = ctypes.c_bool; # Placeholder to satisfy ctypes
   _length_ = 1; # Placeholder to satisfy ctypes
-  __metaclass__ = type("iArrayMetaType", (tCreateArrayMetaType, cCTypesArrayMetaType), {});
+  
   
   @staticmethod
   def fcCreateClass(cElementClass, uElementCount):
     global gddcArrayType_by_uElementCount_by_uElementType;
     assert issubclass(cElementClass, iBaseType), \
         "cElementClass is not a type but %s" % repr(cElementClass);
-    assert isinstance(uElementCount, (int, long)) and uElementCount > 0, \
+    assert isinstance(uElementCount, int) and uElementCount > 0, \
         "uElementCount is not a positive integer larger than zero but %s" % repr(uElementCount);
     dcArrayType_by_uElementCount = gddcArrayType_by_uElementCount_by_uElementType.setdefault(cElementClass, {});
     cArrayType = dcArrayType_by_uElementCount.get(uElementCount);
@@ -46,19 +46,19 @@ class iArrayBaseType(iBaseType, ctypes.Array):
     super(iArrayBaseType, oSelf).__init__();
     if len(txInitialValues) == 0:
       pass; # do not initialize
-    elif len(txInitialValues) == 1 and isinstance(txInitialValues[0], (str, unicode)):
+    elif len(txInitialValues) == 1 and isinstance(txInitialValues[0], (bytes, str)):
       assert issubclass(oSelf.__class__.cElementClass, iCharacterBaseType), \
           "Cannot initialize a %s with a string: it is not an array of characters, but of %s" % \
           (oSelf.__class__.sName, oSelf.__class__.cElementClass.sName);
       # Initialize with string. set any elements beyond the end of the string to 0.
-      sInitialValue = txInitialValues[0];
-      for uIndex in xrange(oSelf.__class__.uElementCount):
-        oSelf[uIndex].fSetValue(sInitialValue[uIndex] if uIndex < len(sInitialValue) else 0);
+      sxInitialValue = txInitialValues[0];
+      for uIndex in range(oSelf.__class__.uElementCount):
+        oSelf[uIndex].fSetValue(sxInitialValue[uIndex] if uIndex < len(sxInitialValue) else 0);
     else:
       assert len(txInitialValues) == oSelf.__class__.uElementCount, \
           "Cannot initialize an array containing %d elements with %d values" % \
           (oSelf.__class__.uElementCount, len(txInitialValues));
-      for uIndex in xrange(len(txInitialValues)):
+      for uIndex in range(len(txInitialValues)):
         oSelf[uIndex].fSetValue(txInitialValues[uIndex]);
   
   def faxGetValues(oSelf):
@@ -67,24 +67,43 @@ class iArrayBaseType(iBaseType, ctypes.Array):
         (oSelf.__class__.sName, oSelf.__class__.cElementClass.sName);
     return [
       oSelf[uIndex].fxGetValue()
-      for uIndex in xrange(0, oSelf.__class__.uElementCount)
+      for uIndex in range(0, oSelf.__class__.uElementCount)
     ];
         
   def fsGetNullTerminatedString(oSelf, u0StartIndex = None):
     # Look for a NULL terminated string.
     assert issubclass(oSelf.__class__.cElementClass, iCharacterBaseType), \
-        "Cannot get string value of %s: it is not an array of characters, but of %s" % \
+        "Cannot get '\\0' terminated string value of %s: it is not an array of characters, but of %s" % \
         (oSelf.__class__.sName, oSelf.__class__.cElementClass.sName);
     uStartIndex = 0 if u0StartIndex is None else u0StartIndex;
     assert uStartIndex < oSelf.__class__.uElementCount, \
-        "Cannot get string from index %d in a buffer of %d characters" % (uStartIndex, oSelf.__class__.uElementCount);
+        "Cannot get '\\0' terminated string from index %d in a buffer of only %d characters" % \
+        (uStartIndex, oSelf.__class__.uElementCount);
     # Read at most until the end of the buffer but stop if we encounter a '\0' before then.
-    sString = oSelf.cElementClass.sEmptyString;
-    for uIndex in xrange(uStartIndex, oSelf.__class__.uElementCount):
+    sString = "";
+    for uIndex in range(uStartIndex, oSelf.__class__.uElementCount):
       uCharCode = oSelf[uIndex].fuGetValue();
       if uCharCode == 0:
         return sString;
       sString += oSelf[uIndex].fsGetValue();
+    return None; # There is no NULL terminator!
+  
+  def fsbGetNullTerminatedBytesString(oSelf, u0StartIndex = None):
+    # Look for a NULL terminated string.
+    assert issubclass(oSelf.__class__.cElementClass, iCharacterBaseType) and Self.__class__.cElementClass.fuGetSize() == 1, \
+        "Cannot get '\\0' terminated bytes string value of %s: it is not an array of byte-sized characters, but of %s" % \
+        (oSelf.__class__.sName, oSelf.__class__.cElementClass.sName);
+    uStartIndex = 0 if u0StartIndex is None else u0StartIndex;
+    assert uStartIndex < oSelf.__class__.uElementCount, \
+        "Cannot get '\\0' terminated bytes string from index %d in a buffer of only %d characters" % \
+        (uStartIndex, oSelf.__class__.uElementCount);
+    # Read at most until the end of the buffer but stop if we encounter a '\0' before then.
+    sbString = b"";
+    for uIndex in range(uStartIndex, oSelf.__class__.uElementCount):
+      uCharCode = oSelf[uIndex].fuGetValue();
+      if uCharCode == 0:
+        return sbString;
+      sbString += oSelf[uIndex].fsbGetValue();
     return None; # There is no NULL terminator!
   
   def fsGetValue(oSelf, u0StartIndex = None, u0Length = None):
@@ -95,14 +114,35 @@ class iArrayBaseType(iBaseType, ctypes.Array):
     uStartIndex = u0StartIndex if u0StartIndex is not None else 0;
     uEndIndex = uStartIndex + u0Length if u0Length is not None else oSelf.__class__.uElementCount;
     assert uStartIndex < oSelf.__class__.uElementCount, \
-        "Cannot get string value from index %d in a buffer of %d characters" % (uStartIndex, oSelf.__class__.uElementCount);
+        "Cannot get string value from index %d in a buffer of %d characters" % \
+        (uStartIndex, oSelf.__class__.uElementCount);
     assert uEndIndex <= oSelf.__class__.uElementCount, \
-        "Cannot get string from index %d with length %d in a buffer of %d characters" % (uStartIndex, u0Length, oSelf.__class__.uElementCount);
-    sValue = oSelf.cElementClass.sEmptyString.join([
+        "Cannot get string from index %d with length %d in a buffer of %d characters" % \
+        (uStartIndex, u0Length, oSelf.__class__.uElementCount);
+    sValue = "".join([
       oSelf[uIndex].fsGetValue()
-      for uIndex in xrange(uStartIndex, uEndIndex)
+      for uIndex in range(uStartIndex, uEndIndex)
     ]);
     return sValue;
+  
+  def fsbGetValue(oSelf, u0StartIndex = None, u0Length = None):
+    # Read exactly as many characters as requested.
+    assert issubclass(oSelf.__class__.cElementClass, iCharacterBaseType) and oSelf.__class__.cElementClass.fuGetSize() == 1, \
+        "Cannot get bytes string value of %s: it is not an array of byte-sized characters, but of %s" % \
+        (oSelf.__class__.sName, oSelf.__class__.cElementClass.sName);
+    uStartIndex = u0StartIndex if u0StartIndex is not None else 0;
+    uEndIndex = uStartIndex + u0Length if u0Length is not None else oSelf.__class__.uElementCount;
+    assert uStartIndex < oSelf.__class__.uElementCount, \
+        "Cannot get bytes string value from index %d in a buffer of %d characters" % \
+        (uStartIndex, oSelf.__class__.uElementCount);
+    assert uEndIndex <= oSelf.__class__.uElementCount, \
+        "Cannot get bytes string from index %d with length %d in a buffer of %d characters" % \
+        (uStartIndex, u0Length, oSelf.__class__.uElementCount);
+    sbValue = bytes(
+      oSelf[uIndex].fuGetValue()
+      for uIndex in range(uStartIndex, uEndIndex)
+    );
+    return sbValue;
   
   def fsDumpValue(oSelf, bNullTerminated = True):
     assert issubclass(oSelf.__class__.cElementClass, iCharacterBaseType), \
@@ -110,7 +150,7 @@ class iArrayBaseType(iBaseType, ctypes.Array):
     sEscapedValue = "";
     uLength = None;
     uMaxCharacterCount = oSelf.__class__.uElementCount;
-    for uElementIndex in xrange(uMaxCharacterCount):
+    for uElementIndex in range(uMaxCharacterCount):
       oChar = oSelf[uElementIndex];
       uCharCode = oChar.fuGetValue();
       if bNullTerminated and uCharCode == 0:
@@ -168,11 +208,11 @@ class iArrayBaseType(iBaseType, ctypes.Array):
     asDumpLines = [];
     if issubclass(cElementClass, iCharacterBaseType):
       # array of chars can be dumped in blocks
-      uBlockLength = 16 / uElementSize;
-      for uBlockIndex in xrange(0, uElementCount, uBlockLength):
+      uBlockLength = int(16 / uElementSize);
+      for uBlockIndex in range(0, uElementCount, uBlockLength):
         auBlockBytes = [];
-        sBlockChars = cElementClass.sEmptyString;
-        for uElementIndex in xrange(uBlockIndex, uBlockIndex + uBlockLength):
+        sBlockChars = "";
+        for uElementIndex in range(uBlockIndex, uBlockIndex + uBlockLength):
           if uElementIndex == uElementCount:
             break;
           oElement = oSelf[uElementIndex];
@@ -188,7 +228,7 @@ class iArrayBaseType(iBaseType, ctypes.Array):
           sComment = sBlockChars,
         ));
     else:
-      for uElementIndex in xrange(uElementCount):
+      for uElementIndex in range(uElementCount):
         oElement = oSelf[uElementIndex];
         sElementsIndex = "%d" % uElementIndex if uElementIndex < 10 else "%d / 0x%X" % (uElementIndex, uElementIndex);
         sElementName = "%s[%s]" % (sName, sElementsIndex);
