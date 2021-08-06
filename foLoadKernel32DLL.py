@@ -103,6 +103,14 @@ def foLoadKernel32DLL():
           "xReturnType": BOOL,
           "txArgumentTypes": (HANDLE, LPDWORD),
         },
+        "GetFileAttributesA": {
+          "xReturnType": DWORD,
+          "txArgumentTypes": (LPCSTR),
+        },
+        "GetFileAttributesW": {
+          "xReturnType": DWORD,
+          "txArgumentTypes": (LPCWSTR),
+        },
         "GetLastError": {
           "xReturnType": DWORD,
         },
@@ -250,6 +258,14 @@ def foLoadKernel32DLL():
         "SetConsoleTitleW": {
           "xReturnType": BOOL,
           "txArgumentTypes": (LPCWSTR),
+        },
+        "SetFileAttributesA": {
+          "xReturnType": BOOL,
+          "txArgumentTypes": (LPCSTR, DWORD),
+        },
+        "SetFileAttributesW": {
+          "xReturnType": BOOL,
+          "txArgumentTypes": (LPCWSTR, DWORD),
         },
         "SetHandleInformation": {
           "xReturnType": BOOL,
