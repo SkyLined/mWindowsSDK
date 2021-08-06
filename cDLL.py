@@ -57,7 +57,7 @@ class cDLLFunction(object):
     try:
       xReturnValue = oSelf.__fFunctionWrapper(*txArguments);
     except ctypes.ArgumentError as oException:
-      oArgumentNumberMatch = re.match(r"argument (\d+):.*", oException.message);
+      oArgumentNumberMatch = re.match(r"argument (\d+):.*", oException.args[0]);
       u0WrongArgumentIndex = oArgumentNumberMatch and int(oArgumentNumberMatch.group(1)) - 1;
       print(("*" * 80));
       print(("* Invalid arguments passed to %s.%s():" % (oSelf.sDLLName, oSelf.sName)));
