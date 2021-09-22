@@ -14,6 +14,11 @@ def fTestDependencies():
   sModulesFolderPath = os.path.join(sMainFolderPath, "modules");
   asOriginalSysPath = sys.path[:];
   # Load mDebugOutput if available to improve error output
+  sys.path = [sModulesFolderPath];
+  try:
+    from mExitCodes import guExitCodeInternalError;
+  except:
+    guExitCodeInternalError = 1; # Use standard value.
   sys.path = [sParentFolderPath] + asOriginalSysPath;
   try:
     import mDebugOutput as m0DebugOutput;
@@ -208,7 +213,7 @@ def fTestDependencies():
         raise AssertionError("Incorrect dependencies found!");
   except Exception as oException:
     if m0DebugOutput:
-      m0DebugOutput.fTerminateWithException(oException);
+      m0DebugOutput.fTerminateWithException(oException, guExitCodeInternalError);
     raise;
   finally:
     sys.path = [sMainFolderPath, sParentFolderPath] + asOriginalSysPath;
