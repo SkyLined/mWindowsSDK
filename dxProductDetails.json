@@ -1,8 +1,9 @@
 {
   "a0sDebugAdditionalProductNames": [
-    "mFileSystemItem",
+    "mConsole",
     "mDebugOutput",
-    "mConsole"
+    "mFileSystemItem",
+    "mNotProvided"
   ],
   "asProductTypes": [
     "Python module"
