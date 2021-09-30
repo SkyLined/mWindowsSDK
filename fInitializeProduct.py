@@ -54,20 +54,23 @@ def fInitializeProduct():
   
   # This is supposed to be the __init__.py file in the main product folder.
   sMainProductFolderPath = os.path.normpath(os.path.dirname(__file__));
-  asExpectedModulePaths = [
-    sMainProductFolderPath,
-    os.path.dirname(sMainProductFolderPath), # parent folder
-    os.path.join(sMainProductFolderPath, "modules") # "modules" folder
-  ]
+  asPotentialModuleParentPaths = [];
+  if bIsMainProduct:
+    # Main products can be stand-alone, where all dependcy modules are in a modules folder.
+    asPotentialModuleParentPaths.append(os.path.join(sMainProductFolderPath, "modules"));
+  # Main products can use shared modules, where dependencies folders are children of the product's parent folder.
+  # Non-main modules' dependencies are always children of the module's parent folder.
+  # Therefore we always check the product's parent folder for dependencies.
+  asPotentialModuleParentPaths.append(os.path.dirname(sMainProductFolderPath));
   asOriginalSysPath = sys.path[:];
   # Our search path will be the main product folder first, its parent folder
   # second, the "modules" child folder of the main product folder third, and
   # whatever was already in the search path last.
-  sys.path = asExpectedModulePaths + [sPath for sPath in sys.path if sPath not in asExpectedModulePaths];
-#  if bDebugOutput:
-#    fDebugOutput("* Module search path:");
-#    for sPath in sys.path:
-#      fDebugOutput("  %s" % sPath);
+  sys.path = asPotentialModuleParentPaths + [sPath for sPath in sys.path if sPath not in asPotentialModuleParentPaths];
+  if bDebugOutput:
+    fDebugOutput("* Module search path:");
+    for sPath in sys.path:
+      fDebugOutput("  %s" % sPath);
   # Load the dxProductDetails.json file and extract dependencies:
   sProductDetailsFilePath = os.path.join(sMainProductFolderPath, "dxProductDetails.json");
   if bDebugOutput: fDebugStatus("\xB7 Loading product details (%s)..." % sProductDetailsFilePath);
