@@ -8,7 +8,7 @@ def fInitializeProduct():
     guExitCodeBadDependencyError = 3;
   
   import __main__;
-  bIsMainProduct = hasattr(__main__, "__file__") and os.path.dirname(__main__.__file__) == os.path.dirname(__file__);
+  bProductIsAnApplication = hasattr(__main__, "__file__") and os.path.dirname(__main__.__file__) == os.path.dirname(__file__);
   
   bDebugOutput = "--debug-product-initialization" in sys.argv[1:];
   auCurrentLineLength = [0];
@@ -36,7 +36,7 @@ def fInitializeProduct():
               ("Optional module" if bOptional else "Module", sModuleName, oException.__class__.__name__, repr(oException.args)[1:-1]));
       if bOptional:
         return None;
-      if bIsMainProduct:
+      if bProductIsAnApplication:
         print("*" * 80);
         if bModuleNotFound:
           print("%s depends on %s which is not available." % (sProductName, sModuleName));
@@ -52,16 +52,16 @@ def fInitializeProduct():
     if bDebugOutput: fDebugOutput("+ Module %s loaded (%s)." % (sModuleName, os.path.dirname(oModule.__file__)));
     return oModule;
   
-  # This is supposed to be the __init__.py file in the main product folder.
-  sMainProductFolderPath = os.path.normpath(os.path.dirname(__file__));
+  # This is supposed to be the __init__.py file in the module folder.
+  sProductFolderPath = os.path.normpath(os.path.dirname(__file__));
   asPotentialModuleParentPaths = [];
-  if bIsMainProduct:
-    # Main products can be stand-alone, where all dependcy modules are in a modules folder.
-    asPotentialModuleParentPaths.append(os.path.join(sMainProductFolderPath, "modules"));
-  # Main products can use shared modules, where dependencies folders are children of the product's parent folder.
-  # Non-main modules' dependencies are always children of the module's parent folder.
-  # Therefore we always check the product's parent folder for dependencies.
-  asPotentialModuleParentPaths.append(os.path.dirname(sMainProductFolderPath));
+  if bProductIsAnApplication:
+    # Applications can be stand-alone, where all dependcy modules are in a `modules` sub-folder of the product folder:
+    asPotentialModuleParentPaths.append(os.path.join(sProductFolderPath, "modules"));
+  # Applications can use shared modules, where dependencies' folders are children of the application's parent
+  # folder. Non-application modules' dependencies are always children of the module's parent folder.
+  # Therefore we always add the product's parent folder to the modules search path.
+  asPotentialModuleParentPaths.append(os.path.dirname(sProductFolderPath));
   asOriginalSysPath = sys.path[:];
   # Our search path will be the main product folder first, its parent folder
   # second, the "modules" child folder of the main product folder third, and
@@ -72,7 +72,7 @@ def fInitializeProduct():
     for sPath in sys.path:
       fDebugOutput("  %s" % sPath);
   # Load the dxProductDetails.json file and extract dependencies:
-  sProductDetailsFilePath = os.path.join(sMainProductFolderPath, "dxProductDetails.json");
+  sProductDetailsFilePath = os.path.join(sProductFolderPath, "dxProductDetails.json");
   if bDebugOutput: fDebugStatus("\xB7 Loading product details (%s)..." % sProductDetailsFilePath);
   try:
     with open(sProductDetailsFilePath, "rb") as oProductDetailsFile:
@@ -101,6 +101,6 @@ def fInitializeProduct():
   # module is loaded, causing the later module not to display debug
   # output even though it was requested. Once this code is executed
   # in the main product, all modules should have been loaded.
-  if bDebugOutput and bIsMainProduct:
+  if bDebugOutput and bProductIsAnApplication:
     sys.argv = sys.argv[:1] + [s for s in sys.argv[1:] if s != "--debug-product-initialization"];
   
