@@ -1,4 +1,4 @@
-import sys;
+﻿import sys;
 
 gbDebugOutput = False;
 
@@ -161,7 +161,7 @@ def fTestDependencies():
       dxProductDetails.get("a0sReleaseAdditionalProductNames", []) +
       dxProductDetails.get("a0sDebugAdditionalProductNames", []) 
     );
-    asUnexpectedDependencyModuleNames = [
+    asUnreportedDependencyModuleNames = [
       sModuleName
       for sModuleName in dsLoadedDependencyModules_by_sName.keys()
       if sModuleName not in asExpectedDependencyModulesNames
@@ -171,16 +171,16 @@ def fTestDependencies():
       for sModuleName in dxProductDetails.get("a0sDependentOnProductNames", [])
       if sModuleName not in dsLoadedDependencyModules_by_sName
     ];
-    if asUnexpectedDependencyModuleNames:
-      print("The product has unreported dependencies! (marked with '+')");
+    if asUnreportedDependencyModuleNames:
+      print("The product has unreported dependencies! (marked with '▲')");
     if asSuperfluousDependencyModuleNames:
-      print("The product has superfluous dependencies! (marked with '-')");
-    if asUnexpectedDependencyModuleNames or asSuperfluousDependencyModuleNames:
-      for sModuleName in sorted(list(dsLoadedDependencyModules_by_sName.keys()) + asSuperfluousDependencyModuleNames):
-        print("%s %s%s" % (
-          "+" if sModuleName in asUnexpectedDependencyModuleNames
-              else "-" if sModuleName in asSuperfluousDependencyModuleNames
-              else " ",
+      print("The product has superfluous dependencies! (marked with '×')");
+    if asUnreportedDependencyModuleNames or asSuperfluousDependencyModuleNames:
+      for sModuleName in sorted(asExpectedDependencyModulesNames + list(dsLoadedDependencyModules_by_sName.keys()) + asSuperfluousDependencyModuleNames):
+        print("[%s] %s%s" % (
+          "√" if sModuleName in asExpectedDependencyModulesNames else "",
+          "▲" if sModuleName in asUnreportedDependencyModuleNames else "",
+          "×" if sModuleName in asSuperfluousDependencyModuleNames else "",
           sModuleName,
           " (%s)" % (dsLoadedDependencyModules_by_sName[sModuleName].__file__,) if sModuleName in dsLoadedDependencyModules_by_sName else "",
         ));
@@ -188,7 +188,7 @@ def fTestDependencies():
     
     if gbDebugOutput:
       if asUnexpectedDependencyPythonInteralModuleBaseNames or asSuperflousDependencyPythonInternalModuleBaseNames \
-          or asUnexpectedDependencyModuleNames or asSuperfluousDependencyModuleNames:
+          or asUnreportedDependencyModuleNames or asSuperfluousDependencyModuleNames:
         for sModuleName in sorted(sys.modules.keys()):
           if "." in sModuleName:
             continue;
