@@ -176,13 +176,13 @@ def fTestDependencies():
     if asSuperfluousDependencyModuleNames:
       print("The product has superfluous dependencies! (marked with '×')");
     if asUnreportedDependencyModuleNames or asSuperfluousDependencyModuleNames:
-      for sModuleName in sorted(asExpectedDependencyModulesNames + list(dsLoadedDependencyModules_by_sName.keys()) + asSuperfluousDependencyModuleNames):
+      for sModuleName in sorted(list(set(asExpectedDependencyModulesNames + list(dsLoadedDependencyModules_by_sName.keys()) + asSuperfluousDependencyModuleNames))):
         print("[%s%s%s] %s%s" % (
           "√" if sModuleName in asExpectedDependencyModulesNames else "",
           "▲" if sModuleName in asUnreportedDependencyModuleNames else "",
           "×" if sModuleName in asSuperfluousDependencyModuleNames else "",
           sModuleName,
-          " (%s)" % (dsLoadedDependencyModules_by_sName[sModuleName].__file__,) if sModuleName in dsLoadedDependencyModules_by_sName else "",
+          " (%s)" % (dsLoadedDependencyModules_by_sName[sModuleName].__file__,) if sModuleName in dsLoadedDependencyModules_by_sName else " (not loaded)",
         ));
       sys.exit(1);
     
