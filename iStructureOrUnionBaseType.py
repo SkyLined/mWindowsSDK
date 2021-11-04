@@ -1,4 +1,4 @@
-import ctypes, inspect;
+﻿import ctypes, inspect;
 
 from .fsDumpInteger import fsDumpInteger;
 from .iBaseType import iBaseType;
@@ -81,7 +81,7 @@ class iStructureOrUnionBaseType(iBaseType):
         sPadding = sPadding,
         sType = oSelf.__class__.sName,
         sName = sName,
-        sComment =  "%d bits aligned" % oSelf.__class__.uAlignmentInBits,
+        sComment =  "// %d bits aligned" % oSelf.__class__.uAlignmentInBits,
       )] +
       oSelf.fasDumpContent(uOffset, sPadding) +
       (_fasGetDumpFooter() if bOutputHeader else [])
@@ -91,11 +91,12 @@ class iStructureOrUnionBaseType(iBaseType):
     asDumpData = [];
     for uMemberIndex in range(len(oSelf._fields_)):
       xMember = oSelf._fields_[uMemberIndex];
+      sIndentedPadding = sPadding + "╵ ";
       if len(xMember) == 2:
         (sMemberName, cMemberType) = xMember;
         oMember = getattr(oSelf, sMemberName);
         uMemberOffset = uOffset + oSelf.__class__.fuGetOffsetOfMember(sMemberName);
-        asDumpData += oMember.fasDump(sMemberName, uMemberOffset, sPadding + ": ", bOutputHeader = False);
+        asDumpData += oMember.fasDump(sMemberName, uMemberOffset, sIndentedPadding, bOutputHeader = False);
       else:
         (sMemberName, cMemberType, uMemberBits) = xMember;
         cBitFieldType = getattr(oSelf.__class__, sMemberName);
@@ -105,7 +106,7 @@ class iStructureOrUnionBaseType(iBaseType):
           uOffset = uOffset + oSelf.fuGetOffsetOfMember(sMemberName),
           u0BitsOffset = uMemberBitsOffset,
           u0BitsSize = uMemberBits,
-          sPadding = sPadding + ": ",
+          sPadding = sIndentedPadding,
           sType = "bitfield",
           sName = sMemberName,
           sComment = "value = %s" % oMember.fsDumpValue()

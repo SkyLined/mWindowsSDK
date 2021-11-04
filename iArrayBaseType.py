@@ -1,4 +1,4 @@
-import ctypes, json;
+﻿import ctypes, json;
 
 from .fsDumpInteger import fsDumpInteger;
 from .iBaseType import iBaseType;
@@ -222,7 +222,7 @@ class iArrayBaseType(iBaseType, ctypes.Array, metaclass=type("iArrayMetaType", (
         asDumpLines.append(_fsFormatDumpLine(
           uOffset = uOffset + (uBlockIndex * uElementSize),
           a0uBytes = auBlockBytes,
-          sPadding = sPadding + ("| " if uBlockIndex < uElementCount - uBlockLength else "`-"),
+          sPadding = sPadding + ("╵ " if uBlockIndex < uElementCount - uBlockLength else "╰ "),
           sType = sElementTypeName,
           sName = "%s[%d ... %s]" % (sName, uBlockIndex, uBlockIndex + len(sBlockChars)),
           sComment = sBlockChars,
@@ -232,7 +232,7 @@ class iArrayBaseType(iBaseType, ctypes.Array, metaclass=type("iArrayMetaType", (
         oElement = oSelf[uElementIndex];
         sElementsIndex = "%d" % uElementIndex if uElementIndex < 10 else "%d / 0x%X" % (uElementIndex, uElementIndex);
         sElementName = "%s[%s]" % (sName, sElementsIndex);
-        asDumpLines += oElement.fasDump(sElementName, uOffset, sPadding + ": ", bOutputHeader = False);
+        asDumpLines += oElement.fasDump(sElementName, uOffset, sPadding + "╵ ", bOutputHeader = False);
         uOffset += uElementSize;
     return asDumpLines;
   
@@ -241,7 +241,7 @@ class iArrayBaseType(iBaseType, ctypes.Array, metaclass=type("iArrayMetaType", (
       # Show (part of the) value of character array types (i.e. strings)
       sValue = repr(oSelf.fsGetValue(u0Length = min(30, oSelf.__class__.uElementCount)));
       if len(sValue) > 32:
-        sValue = sValue[:28] + "..." + sValue[-1];
+        sValue = sValue[:28] + "…" + sValue[-3];
       sValueNotes = " " + sValue;
     else:
       sValueNotes = "";
