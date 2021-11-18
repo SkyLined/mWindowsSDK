@@ -8,9 +8,3 @@ def fExportPrimitive(sName, xBaseType):
   __all__.append(sName); # Make it available as an export from this module.
 
 # Add additional primitives here using fExportPrimitive:
-# Source for these is internet searches, nothing reliable.
-fExportPrimitive("HDC", HANDLE);
-fExportPrimitive("D3DDDI_VIDEO_PRESENT_SOURCE_ID", UINT);
-fExportPrimitive("D3DGPU_VIRTUAL_ADDRESS", ULONGLONG);
-fExportPrimitive("D3DKMT_HANDLE", UINT);
-fExportPrimitive("D3DKMT_CLIENTHINT", UINT);

@@ -1,5 +1,10 @@
+from ..mWindowsConstants import __all__ as asWindowsConstantName;
 from ..mWindowsConstants import *;
+__all__ = asWindowsConstantName[:];
 
+asNotToBeExported = list(globals().keys());
+
+# Add additional constants here:
 WINHTTP_ACCESS_TYPE_DEFAULT_PROXY       =          0;
 WINHTTP_ACCESS_TYPE_NO_PROXY            =          1;
 WINHTTP_ACCESS_TYPE_NAMED_PROXY         =          3;
@@ -22,3 +27,7 @@ WINHTTP_AUTOPROXY_RUN_OUTPROCESS_ONLY   = 0x00020000;
 WINHTTP_AUTOPROXY_SORT_RESULTS          = 0x00400000;
 WINHTTP_NO_PROXY_NAME                   =       NULL;
 WINHTTP_NO_PROXY_BYPASS                 =       NULL;
+
+# Make sure everything we defined in this file is exported:
+__all__ += [sName for sName in globals().keys() if sName not in asNotToBeExported];
+

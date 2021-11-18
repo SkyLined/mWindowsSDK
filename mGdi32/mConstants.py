@@ -1,5 +1,10 @@
+from ..mWindowsConstants import __all__ as asWindowsConstantName;
 from ..mWindowsConstants import *;
+__all__ = asWindowsConstantName[:];
 
+asNotToBeExported = list(globals().keys());
+
+# Add additional constants here:
 D3DKMT_CLIENTHINT_UNKNOWN               = 0;
 D3DKMT_CLIENTHINT_OPENGL                = 1;
 D3DKMT_CLIENTHINT_CDD                   = 2;
@@ -17,3 +22,7 @@ D3DKMT_CLIENTHINT_9ON12                 = 13;
 D3DKMT_CLIENTHINT_11ON12                = 14;
 D3DKMT_CLIENTHINT_MFT_ENCODE            = 15;
 D3DKMT_CLIENTHINT_MAX                   = 16;
+
+# Make sure everything we defined in this file is exported:
+__all__ += [sName for sName in globals().keys()if sName not in asNotToBeExported];
+

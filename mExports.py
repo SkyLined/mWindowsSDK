@@ -1,5 +1,4 @@
 import importlib;
-
 from .iArrayBaseType import iArrayBaseType;
 from .iCharacterBaseType import iCharacterBaseType;
 from .mCharacterClasses import \
@@ -48,7 +47,6 @@ from .cDLL import cDLL;
 
 from .foLoadAdvAPI32DLL import foLoadAdvAPI32DLL;
 from .foLoadDbgHelpDLL import foLoadDbgHelpDLL;
-from .foLoadKernel32DLL import foLoadKernel32DLL;
 from .foLoadNTDLL import foLoadNTDLL;
 from .foLoadUser32DLL import foLoadUser32DLL;
 
@@ -130,7 +128,6 @@ __all__ = [
   # Windows DLL loaders
   "foLoadAdvAPI32DLL",
   "foLoadDbgHelpDLL",
-  "foLoadKernel32DLL",
   "foLoadNTDLL",
   "foLoadUser32DLL",
   

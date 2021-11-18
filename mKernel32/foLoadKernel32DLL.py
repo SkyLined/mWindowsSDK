@@ -1,7 +1,8 @@
-from .cDLL import cDLL;
-from .mWindowsPrimitives import *;
-from .mWindowsStructures import *;
-from .uProcessBits import uProcessBits;
+from ..cDLL import cDLL;
+from .mConstants import *;
+from .mPrimitives import *;
+from .mStructures import *;
+from ..uProcessBits import uProcessBits;
 
 goKernel32DLL = None;
 def foLoadKernel32DLL():

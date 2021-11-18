@@ -116,28 +116,29 @@ di0BaseType_by_sName = {
 
 __all__ = [];
 
-def fExportPrimitive(sName, xBaseType):
-  cType = type(sName, (xBaseType,), {"sName": sName});
-  globals()[sName] = cType; # Make it available in the context of this file
+def fExport(sName, xValue):
+  globals()[sName] = xValue; # Make it available in the context of this file
   __all__.append(sName); # Make it available as an export from this module.
 
-def fExportPointers(sName, c0Target):
-  cTargetPointer = c0Target.fcCreatePointer() if c0Target else cVoidPointer;
-  cTargetPointer32 = c0Target.fcCreatePointer32() if c0Target else cVoidPointer32;
-  cTargetPointer64 = c0Target.fcCreatePointer64() if c0Target else cVoidPointer64;
-  fExportPrimitive("P%s" % sName,   cTargetPointer);
-  fExportPrimitive("LP%s" % sName,  cTargetPointer);
-  fExportPrimitive("PP%s" % sName,  cTargetPointer.fcCreatePointer());
-  # We also explicitly define 32-bit and 64-bit pointer-to-types
-  fExportPrimitive("P32%s" % sName, cTargetPointer32);
-  fExportPrimitive("P64%s" % sName, cTargetPointer64);
-
 for (sName, i0BaseType) in di0BaseType_by_sName.items():
-  if i0BaseType is not None:
-    # For LPVOID and such we do not export "VOID", for the rest we do:
-    fExportPrimitive(sName, i0BaseType);
-  fExportPointers(sName, i0BaseType);
+  if i0BaseType: # We do not export "VOID" but it is in the list to export "PVOID"
+    cType = type(sName, (i0BaseType,), {"sName": sName});
+    fExport(sName, cType);
+    cPointerType = cType.fcCreatePointer();
+    cTargetPointer32 = cType.fcCreatePointer32();
+    cTargetPointer64 = cType.fcCreatePointer64();
+  else:
+    cPointerType = cVoidPointer;
+    cTargetPointer32 = cVoidPointer32;
+    cTargetPointer64 = cVoidPointer64;
+    
+  fExport("P%s" % sName,   cPointerType);
+  fExport("LP%s" % sName,  cPointerType);
+  fExport("PP%s" % sName,  cPointerType.fcCreatePointer());
+  # We also explicitly define 32-bit and 64-bit pointer-to-types
+  fExport("P32%s" % sName, cTargetPointer32);
+  fExport("P64%s" % sName, cTargetPointer64);
   # For types based on a pointer, we explicitly export 32- and 64-bit versions.
   if i0BaseType is cVoidPointer:
-    fExportPrimitive(sName + "32", cVoidPointer32);
-    fExportPrimitive(sName + "64", cVoidPointer64);
+    fExport(sName + "32", type(sName + "32", (cVoidPointer32,), {"sName": sName + "32"}));
+    fExport(sName + "64", type(sName + "32", (cVoidPointer64,), {"sName": sName + "32"}));

@@ -1,4 +1,8 @@
+from ..mWindowsConstants import __all__ as asWindowsConstantName;
 from ..mWindowsConstants import *;
+__all__ = asWindowsConstantName[:];
+
+asNotToBeExported = list(globals().keys());
 
 # WTypesbase.h
 CLSCTX_INPROC_SERVER                    =        0x1;
@@ -33,3 +37,7 @@ CLSCTX_PS_DLL                           = 0x80000000;
 CLSCTX_INPROC                           = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER;
 CLSCTX_SERVER                           = CLSCTX_INPROC_SERVER | CLSCTX_LOCAL_SERVER | CLSCTX_REMOTE_SERVER;
 CLSCTX_ALL                              = CLSCTX_INPROC | CLSCTX_SERVER;
+
+# Make sure everything we defined in this file is exported:
+__all__ += [sName for sName in globals().keys()if sName not in asNotToBeExported];
+
