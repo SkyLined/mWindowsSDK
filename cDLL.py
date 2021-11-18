@@ -1,11 +1,6 @@
-import ctypes, inspect, threading, os, re;
+﻿import ctypes, inspect, threading, os, re;
 
 from .iPrimitiveBaseType import iPrimitiveBaseType;
-
-class cFunctionDoesNotExistException(Exception):
-  def __init__(oSelf, sDLLName, sFunctionName):
-    oSelf.sDLLName = sDLLName;
-    oSelf.sFunctionName = sFunctionName;
 
 class cDLLFunction(object):
   def __init__(
@@ -38,7 +33,7 @@ class cDLLFunction(object):
       );
     except AttributeError as oException:
       # The DLL does not implement this function.
-      raise cFunctionDoesNotExistException(sDLLName, sFunctionName)
+      raise cDLL.cFunctionDoesNotExistException(sDLLName, sFunctionName)
     if oSelf.bSingleThreaded:
       # This function cannot be called concurrently from multiple threads: wrap it in a function that holds a lock
       # while a call is in progress. This allows only a single thread to call it at the same time.
@@ -59,24 +54,42 @@ class cDLLFunction(object):
     except ctypes.ArgumentError as oException:
       oArgumentNumberMatch = re.match(r"argument (\d+):.*", oException.args[0]);
       u0WrongArgumentIndex = oArgumentNumberMatch and int(oArgumentNumberMatch.group(1)) - 1;
-      print(("*" * 80));
-      print(("* Invalid arguments passed to %s.%s():" % (oSelf.sDLLName, oSelf.sName)));
-      for uArgumentIndex in range(len(txArguments)):
-        xArgument = txArguments[uArgumentIndex];
-        xExpectedArgumentType = oSelf.txArgumentTypes[uArgumentIndex];
-        if (
-          xArgument.__class__ != xExpectedArgumentType
-            if u0WrongArgumentIndex is None else
-          uArgumentIndex == u0WrongArgumentIndex
-        ):
-          print(("- Argument %d is %s (%s), which %s correct." % \
-              (uArgumentIndex + 1, repr(xArgument.__class__), repr(xArgument), "may not be" if u0WrongArgumentIndex is None else "is not")));
-          print(("  Expected type = %s." % (repr(xExpectedArgumentType),)));
-        else:
-          print(("+ Argument %d is %s (%s) as expected." % \
-              (uArgumentIndex + 1, repr(xArgument.__class__), repr(xArgument))));
-      print(("*" * 80));
-      raise;
+      aoArgumentDetails = [];
+      uMaxArguments = max(len(oSelf.txArgumentTypes), len(txArguments));
+      for uArgumentIndex in range(uMaxArguments):
+        sStatusChar = " ";
+        xProvidedValue = txArguments[uArgumentIndex] if uArgumentIndex < len(txArguments) else None;
+        cExpectedType = oSelf.txArgumentTypes[uArgumentIndex] if uArgumentIndex < len(oSelf.txArgumentTypes) else None;
+        aoArgumentDetails.append(cDLL.cFunctionArgumentDetails(
+          uArgumentIndex,
+          xProvidedValue,
+          cExpectedType,
+        ));
+      uNumberOfProvidedArguments = len(txArguments);
+      uNumberOfExpectedArguments = len(oSelf.txArgumentTypes);
+      if uNumberOfProvidedArguments < uNumberOfExpectedArguments:
+        sMessage = "missing %d arguments" % (uNumberOfExpectedArguments - uNumberOfProvidedArguments,);
+      elif uNumberOfProvidedArguments > uNumberOfExpectedArguments:
+        sMessage = "provided %d superfluous arguments" % (uNumberOfProvidedArguments - uNumberOfExpectedArguments,);
+      elif u0WrongArgumentIndex is not None:
+        sMessage = "provided invalid argument #%d: type is %s:%s instead of %s:%s" % (
+          u0WrongArgumentIndex + 1,
+          txArguments[u0WrongArgumentIndex].__class__.__module__, txArguments[u0WrongArgumentIndex].__class__.__name__,
+          oSelf.txArgumentTypes[u0WrongArgumentIndex].__module__, oSelf.txArgumentTypes[u0WrongArgumentIndex].__name__,
+        );
+      else:
+        sMessage = "provided invalid arguments";
+      sMessage += " in call to function %s in DLL %s" % (oSelf.sName, oSelf.sDLLName);
+      mDebugOutput_HideInCallStack = True;
+      raise cDLL.cInvalidFunctionArgumentsException(
+        sMessage,
+        oSelf.sDLLName,
+        oSelf.sName,
+        uNumberOfProvidedArguments,
+        uNumberOfExpectedArguments,
+        u0WrongArgumentIndex,
+        aoArgumentDetails,
+      );
     if oSelf.xReturnType is not None:
       assert type(xReturnValue) == oSelf.xReturnType, \
           "Expected %s to return %s but got %s" % (oSelf.sName, oSelf.xReturnType, repr(xReturnValue));
@@ -91,6 +104,36 @@ class cDLLFunction(object):
 gtsValidDefinitionElementNames = ("xReturnType", "txArgumentTypes", "bSingleThreaded");
 
 class cDLL(object):
+  class cFunctionDoesNotExistException(Exception):
+    def __init__(oSelf, sDLLName, sFunctionName):
+      oSelf.sDLLName = sDLLName;
+      oSelf.sFunctionName = sFunctionName;
+
+  class cFunctionArgumentDetails(object):
+    def __init__(oSelf, uIndex, xProvidedValue, cExpectedType):
+      oSelf.uIndex = uIndex;
+      oSelf.xProvidedValue = xProvidedValue;
+      oSelf.cExpectedType = cExpectedType;
+      
+  class cInvalidFunctionArgumentsException(Exception):
+    def __init__(oSelf,
+      sMessage,
+      sDLLName,
+      sFunctionName,
+      uNumberOfProvidedArguments,
+      uNumberOfExpectedArguments,
+      u0WrongArgumentIndex,
+      aoArgumentDetails,
+    ):
+      oSelf.sMessage = sMessage;
+      oSelf.sDLLName = sDLLName;
+      oSelf.sFunctionName = sFunctionName;
+      oSelf.uNumberOfProvidedArguments = uNumberOfProvidedArguments;
+      oSelf.uNumberOfExpectedArguments = uNumberOfExpectedArguments;
+      oSelf.u0WrongArgumentIndex = u0WrongArgumentIndex;
+      oSelf.aoArgumentDetails = aoArgumentDetails;
+      super().__init__(sMessage);
+  
   def __init__(oSelf, sDLLFilePath, dxFunctions):
     oSelf.__sDLLFilePath = sDLLFilePath;
     oSelf.__oWinDLL = ctypes.WinDLL(sDLLFilePath);
@@ -125,7 +168,7 @@ class cDLL(object):
         txArgumentTypes,
         bSingleThreaded
       );
-    except cFunctionDoesNotExistException as oException:
+    except cDLL.cFunctionDoesNotExistException as oException:
       oDLLFunction = None;
     setattr(oSelf, sFunctionName, oDLLFunction);
     return oDLLFunction is not None;
