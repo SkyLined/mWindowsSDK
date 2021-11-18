@@ -1,7 +1,7 @@
 import re;
 
-from .mWindowsPrimitives import BYTE;
-from .mWindowsStructures import GUID;
+from .mPrimitives import BYTE;
+from .mStructures import GUID;
 
 rGUID = re.compile((
   r"^\{"

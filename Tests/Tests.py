@@ -38,11 +38,13 @@ except:
 
 try:
   from mWindowsSDK import *;
-  from fTestGdi32 import fTestGdi32;
-  from fTestKernel32DLL import fTestKernel32DLL;
-  from fTestUser32GDIDLL import fTestUser32GDIDLL;
   from fTestCharacterTypes import fTestCharacterTypes;
   from fTestIntegerTypes import fTestIntegerTypes;
+  from fTestGdi32 import fTestGdi32;
+  from fTestKernel32DLL import fTestKernel32DLL;
+  from fTestOle32 import fTestOle32;
+  from fTestUser32DLL import fTestUser32DLL;
+  from fTestWinHTTP import fTestWinHTTP;
   from mWindowsSDK.fsDumpInteger import fsDumpInteger;
   
   for (uValue, sValue) in {
@@ -62,7 +64,9 @@ try:
   fTestIntegerTypes(oConsole);
   fTestGdi32(oConsole);
   fTestKernel32DLL(oConsole);
-  fTestUser32GDIDLL(oConsole);
+  fTestOle32(oConsole);
+  fTestUser32DLL(oConsole);
+  fTestWinHTTP(oConsole);
   oConsole.fOutput("+ Done.");
   
 except Exception as oException:

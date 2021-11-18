@@ -1,1 +1,1 @@
-from .mGdi32 import *;
+from .mExports import *;

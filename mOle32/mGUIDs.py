@@ -1,4 +1,5 @@
 from .foParseGUID import foParseGUID;
+from .mStructures import *;
 
 __all__ = [];
 for (sName, sGUID) in {
@@ -120,7 +121,9 @@ for (sName, sGUID) in {
   "IID_ISpeechPhraseInfoBuilder":       "3B151836-DF3A-4E0A-846C-D2ADC9334333",
   "IID_ISpeechPhoneConverter":          "C3E4F353-433F-43d6-89A1-6A62A7054C3D",
 }.items():
-  if sName.startswith("CLSID_"):
+  if sName.startswith("GUID_"):
+    cClass = GUID;
+  elif sName.startswith("CLSID_"):
     cClass = CLSID;
   else:
     assert sName.startswith("IID_"), \

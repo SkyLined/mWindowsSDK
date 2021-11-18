@@ -1,4 +1,5 @@
-from mWindowsSDK import mGdi32;
+from mWindowsSDK import *;
 
 def fTestGdi32(oConsole):
-  oGdi32DLL = mGdi32.foLoadGdi32DLL();
+  from mWindowsSDK.mGdi32 import oGdi32DLL;
+
