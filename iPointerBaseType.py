@@ -1,4 +1,4 @@
-import ctypes, inspect, re;
+﻿import ctypes, inspect, re;
 
 from .fsDumpInteger import fsDumpInteger;
 from .iUnsignedIntegerBaseType import iUnsignedIntegerBaseType;
@@ -24,19 +24,26 @@ class iPointerBaseType(iUnsignedIntegerBaseType):
     
     if cPointerType is None:
       # Pointer name starts with "P" if the size of the pointer is default, "P32"/"P64" if it is not.
+      sName = "P%s%s" % (
+        "" if uPointerSizeInBits == uProcessBits else str(uPointerSizeInBits),
+        c0TargetClass.sName if c0TargetClass is not None else "VOID"
+      );
       cPointerType = type(
-        "P%s%s" % (
-          "" if uPointerSizeInBits == uProcessBits else str(uPointerSizeInBits),
-          c0TargetClass.sName if c0TargetClass is not None else "VOID"
-        ),
+        sName,
         (cPointerBaseType,),
-        {},
+        {
+          "sName": sName,
+          # We want the module of the resulting pointer class to be the same as the class it points to.
+          "__module__": c0TargetClass.__module__ if c0TargetClass is not None else cPointerBaseType.__module__,
+          "uPointerSizeInBits": uPointerSizeInBits,
+          "c0TargetClass": c0TargetClass,
+        },
       );
       dcPointerType_by_uPointerSizeInBits[uPointerSizeInBits] = cPointerType;
-      cPointerType.sName = cPointerType.__name__;
-      cPointerType.uPointerSizeInBits = uPointerSizeInBits;
-      cPointerType.c0TargetClass = c0TargetClass;
-    
+    def fsClassToString(cClass):
+      return "%s:%s" % (cClass.__module__, cClass.__name__) if cClass is not None else "VOID";
+#    print("Pointer %s->%s == %s" % (fsClassToString(cPointerBaseType), fsClassToString(c0TargetClass), fsClassToString(cPointerType)));
+      
     return cPointerType;
   
   @classmethod
