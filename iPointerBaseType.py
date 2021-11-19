@@ -11,6 +11,7 @@ class iPointerBaseType(iUnsignedIntegerBaseType):
   
   @classmethod
   def fcCreateSubClassForTargetType(cPointerBaseType, c0TargetClass):
+    mDebugOutput_HideInCallStack = True;
     global gddcPointerType_by_uPointerSizeInBits_by_c0TargetClass;
     assert c0TargetClass is None or (inspect.isclass(c0TargetClass) and issubclass(c0TargetClass, iBaseType)), \
         "c0TargetClass is not a type but %s" % repr(c0TargetClass);
@@ -48,12 +49,14 @@ class iPointerBaseType(iUnsignedIntegerBaseType):
   
   @classmethod
   def foCreateForTarget(cPointerBaseClass, oTarget):
+    mDebugOutput_HideInCallStack = True;
     assert isinstance(oTarget, iBaseType), \
         "oTarget is not a valid type but %s" % repr(oTarget);
     cPointerSubClass = cPointerBaseClass.fcCreateSubClassForTargetType(oTarget.__class__);
     return cPointerSubClass(oTarget);
   
   def __init__(oSelf, oTarget_sString_or_u0Address = None, bCast = False):
+    mDebugOutput_HideInCallStack = True;
     # oTarget_sString_or_u0Address can be:
     # 1) None, which creates a NULL pointer
     # 2) A number, representing an address, which creates a pointer to that address.
@@ -121,6 +124,7 @@ class iPointerBaseType(iUnsignedIntegerBaseType):
     return oSelf.fuGetValue();
   
   def fsGetValue(oSelf, u0MaxLength = None):
+    mDebugOutput_HideInCallStack = True;
     assert oSelf.__class__.c0TargetClass is not None and issubclass(oSelf.__class__.c0TargetClass, iCharacterBaseType), \
         "Cannot get a string for %s" % oSelf.__class__.sName;
     sData = "";
@@ -136,6 +140,7 @@ class iPointerBaseType(iUnsignedIntegerBaseType):
     return sData;
   
   def foCastTo(oSelf, cNewType):
+    mDebugOutput_HideInCallStack = True;
     # Cast the pointer and copy oTarget to make the new pointer strong if needed and prevent use-after-free:
     oNew = super(iPointerBaseType, oSelf).foCastTo(cNewType);
     oNew.o0HardLinkedTarget = oSelf.o0HardLinkedTarget;

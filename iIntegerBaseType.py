@@ -4,10 +4,12 @@ from .iPrimitiveBaseType import iPrimitiveBaseType;
 
 class iIntegerBaseType(iPrimitiveBaseType):
   def __init__(oSelf, *txArguments, **dxArguments):
+    mDebugOutput_HideInCallStack = True;
     super(iIntegerBaseType, oSelf).__init__(*txArguments, **dxArguments);
     if len(txArguments) > 0:
       oSelf.__fCheckValue(txArguments[0]);
   def __fCheckValue(oSelf, iValue):
+    mDebugOutput_HideInCallStack = True;
     # The user can provide a value but if it is too large or small to store
     # in this type of integer, the value may get truncated. This is not
     # accepted: we check the resulting value matches the provided value and
@@ -36,6 +38,7 @@ class iIntegerBaseType(iPrimitiveBaseType):
     return oSelf.value;
   
   def fSetValue(oSelf, iValue):
+    mDebugOutput_HideInCallStack = True;
     oSelf.value = iValue;
     oSelf.__fCheckValue(iValue);
 

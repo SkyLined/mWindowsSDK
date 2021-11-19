@@ -10,6 +10,7 @@ cCTypesArrayMetaType = type(ctypes.Array);
 class tCreateArrayMetaType(object):
   _type_ = "X"; # Placeholder to satisfy ctypes
   def __getitem__(cSelf, uIndex):
+    mDebugOutput_HideInCallStack = True;
     return iArrayBaseType.fcCreateClass(cSelf, uIndex);
 
 class iArrayBaseType(iBaseType, ctypes.Array, metaclass=type("iArrayMetaType", (tCreateArrayMetaType, cCTypesArrayMetaType), {})):
@@ -19,6 +20,7 @@ class iArrayBaseType(iBaseType, ctypes.Array, metaclass=type("iArrayMetaType", (
   
   @staticmethod
   def fcCreateClass(cElementClass, uElementCount):
+    mDebugOutput_HideInCallStack = True;
     global gddcArrayType_by_uElementCount_by_uElementType;
     assert issubclass(cElementClass, iBaseType), \
         "cElementClass is not a type but %s" % repr(cElementClass);
@@ -43,6 +45,7 @@ class iArrayBaseType(iBaseType, ctypes.Array, metaclass=type("iArrayMetaType", (
     return cArrayType.uElementCount;
   
   def __init__(oSelf, *txInitialValues):
+    mDebugOutput_HideInCallStack = True;
     super(iArrayBaseType, oSelf).__init__();
     if len(txInitialValues) == 0:
       pass; # do not initialize
@@ -62,6 +65,7 @@ class iArrayBaseType(iBaseType, ctypes.Array, metaclass=type("iArrayMetaType", (
         oSelf[uIndex].fSetValue(txInitialValues[uIndex]);
   
   def faxGetValues(oSelf):
+    mDebugOutput_HideInCallStack = True;
     assert issubclass(oSelf.__class__.cElementClass, iPrimitiveBaseType), \
         "Cannot get values of %s: it is not an array of primitives, but of %s" % \
         (oSelf.__class__.sName, oSelf.__class__.cElementClass.sName);
@@ -71,6 +75,7 @@ class iArrayBaseType(iBaseType, ctypes.Array, metaclass=type("iArrayMetaType", (
     ];
         
   def fsGetNullTerminatedString(oSelf, u0StartIndex = None):
+    mDebugOutput_HideInCallStack = True;
     # Look for a NULL terminated string.
     assert issubclass(oSelf.__class__.cElementClass, iCharacterBaseType), \
         "Cannot get '\\0' terminated string value of %s: it is not an array of characters, but of %s" % \
@@ -89,6 +94,7 @@ class iArrayBaseType(iBaseType, ctypes.Array, metaclass=type("iArrayMetaType", (
     return None; # There is no NULL terminator!
   
   def fsbGetNullTerminatedBytesString(oSelf, u0StartIndex = None):
+    mDebugOutput_HideInCallStack = True;
     # Look for a NULL terminated string.
     assert issubclass(oSelf.__class__.cElementClass, iCharacterBaseType) and Self.__class__.cElementClass.fuGetSize() == 1, \
         "Cannot get '\\0' terminated bytes string value of %s: it is not an array of byte-sized characters, but of %s" % \
@@ -107,6 +113,7 @@ class iArrayBaseType(iBaseType, ctypes.Array, metaclass=type("iArrayMetaType", (
     return None; # There is no NULL terminator!
   
   def fsGetValue(oSelf, u0StartIndex = None, u0Length = None):
+    mDebugOutput_HideInCallStack = True;
     # Read exactly as many characters as requested.
     assert issubclass(oSelf.__class__.cElementClass, iCharacterBaseType), \
         "Cannot get string value of %s: it is not an array of characters, but of %s" % \
@@ -126,6 +133,7 @@ class iArrayBaseType(iBaseType, ctypes.Array, metaclass=type("iArrayMetaType", (
     return sValue;
   
   def fsbGetValue(oSelf, u0StartIndex = None, u0Length = None):
+    mDebugOutput_HideInCallStack = True;
     # Read exactly as many characters as requested.
     assert issubclass(oSelf.__class__.cElementClass, iCharacterBaseType) and oSelf.__class__.cElementClass.fuGetSize() == 1, \
         "Cannot get bytes string value of %s: it is not an array of byte-sized characters, but of %s" % \

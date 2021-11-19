@@ -14,6 +14,7 @@ class iCharacterBaseType(iUnsignedIntegerBaseType):
   
   @classmethod
   def foCreateBufferFromString(cCharacterType, sxData, u0Length = None):
+    mDebugOutput_HideInCallStack = True;
     uLength = u0Length if u0Length is not None else len(sxData) + 1;
     assert uLength <= len(sxData) + 1, \
         "You cannot create a buffer of %d characters to store a string of %d characters (%s)" % \
@@ -22,6 +23,7 @@ class iCharacterBaseType(iUnsignedIntegerBaseType):
   
   @classmethod
   def foCreateBufferForLength(cCharacterType, uLength, sxData = b""):
+    mDebugOutput_HideInCallStack = True;
     return cCharacterType[uLength](sxData);
   
   def fxGetValue(oSelf):
@@ -34,7 +36,10 @@ class iCharacterBaseType(iUnsignedIntegerBaseType):
     return bytes((oSelf.fuGetValue()),);
   
   def fSetValue(oSelf, xValue):
+    mDebugOutput_HideInCallStack = True;
     if isinstance(xValue, str):
+      assert len(xValue) == 1, \
+          "Cannot set a char to a multi-char string!";
       xValue = ord(xValue);
     super(iCharacterBaseType, oSelf).fSetValue(xValue);
   
