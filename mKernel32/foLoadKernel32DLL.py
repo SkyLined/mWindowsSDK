@@ -115,6 +115,14 @@ def foLoadKernel32DLL():
         "GetLastError": {
           "xReturnType": DWORD,
         },
+        "GetModuleFileNameA": {
+          "xReturnType": DWORD,
+          "txArgumentTypes": (HMODULE, LPSTR, DWORD),
+        },
+        "GetModuleFileNameW": {
+          "xReturnType": DWORD,
+          "txArgumentTypes": (HMODULE, LPWSTR, DWORD),
+        },
         "GetNativeSystemInfo": {
           "txArgumentTypes": (LPSYSTEM_INFO),
         },
