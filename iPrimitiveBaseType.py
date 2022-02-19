@@ -9,8 +9,6 @@ class tCreateArrayMetaType(object):
     return iArrayBaseType.fcCreateClass(cSelf, uIndex);
 
 class iPrimitiveBaseType(iBaseType, metaclass=type("iPrimitiveMetaType", (tCreateArrayMetaType, cCTypesPrimitiveMetaType), {})):
-  
-  
   @classmethod
   def fcCreateClass(iBaseType, sName, cCTypesBaseTypeClass, *txBadArgs, **dxStaticProperties):
     assert len(txBadArgs) == 0, \
@@ -26,7 +24,7 @@ class iPrimitiveBaseType(iBaseType, metaclass=type("iPrimitiveMetaType", (tCreat
   
   def fsDumpValue(oSelf):
     raise NotImplementedError("%s has not implemented fsDumpValue!" % oSelf.__class__.__name__);
-
+  
   def fsDumpFlags(oSelf, duFlagValue_by_sName):
     uValue = oSelf.fuGetValue();
     if uValue == 0:

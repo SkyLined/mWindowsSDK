@@ -18,12 +18,29 @@ class iBaseType(object):
   
   def fClear(oSelf):
     uSize = oSelf.fuGetSize();
-    aoBYTEs = (ctypes.c_byte * uSize).from_address(oSelf.fuGetAddress());
+    aoBYTEs = (ctypes.c_ubyte * uSize).from_address(oSelf.fuGetAddress());
     for uOffset in range(uSize):
       aoBYTEs[uOffset] = 0;
   
-  def fsbGetBytes(oSelf):
+  def fsbGetValue(oSelf):
     return bytes(ctypes.string_at(oSelf.fuGetAddress(), oSelf.fuGetSize()));
+  
+  def fSetBytes(oSelf, sbValue, bZeroPadding = False):
+    uSize = oSelf.fuGetSize();
+    if bZeroPadding:
+      assert len(sbValue) <= uSize, \
+          "Cannot set %s (size = %d bytes) using a bytes string of %d bytes: %s" % \
+          (oSelf.__class__.__name__, uSize, len(sbValue), repr(sbValue));
+    else:
+      assert uSize == len(sbValue), \
+          "Cannot set %s (size = %d bytes) using a bytes string of %d bytes without zero padding: %s" % \
+          (oSelf.__class__.__name__, uSize, len(sbValue), repr(sbValue));
+    aoBYTEs = (ctypes.c_ubyte * uSize).from_address(oSelf.fuGetAddress());
+    for uOffset in range(len(sbValue)):
+      aoBYTEs[uOffset] = sbValue[uOffset];
+    if bZeroPadding:
+      for uOffset in range(len(sbValue), uSize):
+        aoBYTEs[uOffset] = 0;
   
   def fauGetBytes(oSelf):
     return ctypes.string_at(oSelf.fuGetAddress(), oSelf.fuGetSize());

@@ -1,7 +1,10 @@
+import math;
+
 from .fsDumpInteger import fsDumpInteger;
 from .iUnsignedIntegerBaseType import iUnsignedIntegerBaseType;
 
 class iCharacterBaseType(iUnsignedIntegerBaseType):
+  s0UnicodeEncoding = None; # Default
   def __repr__(oSelf):
     sChar = chr(oSelf.value) if oSelf.value >= 0x20 and oSelf.value < 0x7F else None;
     return "<char %s:%d(%s%s%s) @ 0x%X>" % (
@@ -13,27 +16,29 @@ class iCharacterBaseType(iUnsignedIntegerBaseType):
     );
   
   @classmethod
-  def foCreateBufferFromString(cCharacterType, sxData, u0Length = None):
-    mDebugOutput_HideInCallStack = True;
-    uLength = u0Length if u0Length is not None else len(sxData) + 1;
-    assert uLength <= len(sxData) + 1, \
-        "You cannot create a buffer of %d characters to store a string of %d characters (%s)" % \
-        (uLength, len(sxData), repr(sxData));
-    return cCharacterType.foCreateBufferForLength(uLength, sxData);
-  
-  @classmethod
-  def foCreateBufferForLength(cCharacterType, uLength, sxData = b""):
-    mDebugOutput_HideInCallStack = True;
-    return cCharacterType[uLength](sxData);
+  def foCreateString(cCharacterType, sxData):
+    if isinstance(sxData, bytes):
+      assert cCharacterType.fuGetSize() == 1, \
+          "Cannot create a %s string using bytes: %s" % (cCharacterType.__name__, sxData);
+      sbData = sxData + b"\0"; # Add '\0' terminator
+    else:
+      assert isinstance(sxData, str), \
+          "sxData must be bytes or str, not %s" % repr(sxData);
+      sData = sxData + "\0"; # Add '\0' terminator
+      if cCharacterType.s0UnicodeEncoding is None:
+        sbData = bytes(ord(sChar) for sChar in sData);
+      else:
+        sbData = sData.encode(cCharacterType.s0UnicodeEncoding, "strict");
+    uLength = int(math.ceil(len(sbData) / cCharacterType.fuGetSize()));
+    oArray = cCharacterType[uLength]();
+    oArray.fSetBytes(sbData);
+    return oArray;
   
   def fxGetValue(oSelf):
     return oSelf.fsGetValue();
   
   def fsGetValue(oSelf):
     return chr(oSelf.fuGetValue());
-  
-  def fsbGetValue(oSelf):
-    return bytes((oSelf.fuGetValue()),);
   
   def fSetValue(oSelf, xValue):
     mDebugOutput_HideInCallStack = True;
@@ -50,9 +55,10 @@ class iCharacterBaseType(iUnsignedIntegerBaseType):
       s0Char if s0Char is not None else
       "'\\x%02X'" % uCharCode if uCharCode < 0x20 else
       "'%s'" % chr(uCharCode) if uCharCode < 0x100 else
-      "'\\u%04X'" % uCharCode
+      "'\\u%04X'" % uCharCode if uCharCode < 0x10000 else
+      "'\\U%08X'" % uCharCode
     );
-    sCharCode = {1:"%02X", 2:"%04X"}[oSelf.__class__.uCharSize] % uCharCode;
+    sCharCode = "%%0%dX" % (2 * oSelf.fuGetSize()) % uCharCode;
     return "%s (%s)" % (sChar, sCharCode);
   
   def __repr__(oSelf):

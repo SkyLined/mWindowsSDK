@@ -55,33 +55,37 @@ class iPointerBaseType(iUnsignedIntegerBaseType):
     cPointerSubClass = cPointerBaseClass.fcCreateSubClassForTargetType(oTarget.__class__);
     return cPointerSubClass(oTarget);
   
-  def __init__(oSelf, oTarget_sString_or_u0Address = None, bCast = False):
+  def __init__(oSelf, oTarget_sxData_or_u0Address = None, bCast = False):
     mDebugOutput_HideInCallStack = True;
-    # oTarget_sString_or_u0Address can be:
+    # oTarget_sxData_or_u0Address can be:
     # 1) None, which creates a NULL pointer
-    # 2) A number, representing an address, which creates a pointer to that address.
-    # 3) A string, which creates a array of chars and initializes it with the string (zero terminated) and then creates
-    #    a pointer to that array. The type of char is based on the type of the pointer and the array is stored in the
-    #    `o0HardLinkedTarget property to avoid it being freed while the pointer exists.
-    # 4) Any instance of a class derived from `iBaseType`, which creates a pointer to the address at which this
-    #    instance is stored in memory. The instance is also stored in the `o0HardLinkedTarget` property to avoid it being
-    #    freed while the pointer exists.
-    if oTarget_sString_or_u0Address is None or isinstance(oTarget_sString_or_u0Address, int):
-      uAddress = oTarget_sString_or_u0Address or 0;
+    # 2) 'int', representing an address, which creates a pointer to that address.
+    # 3) 'str' or 'bytes', which creates a array of chars and initializes it with
+    #    the str or bytes (zero terminated) and then creates a pointer to that
+    #    array of chars. The type of char is based on the pointer type and the
+    #    array of chars is stored in the `o0HardLinkedTarget property to avoid
+    #    it being freed while the pointer exists.
+    # 4) Any instance of a class derived from `iBaseType`, which creates a
+    #    pointer to the address at which this instance is stored in memory. The
+    #    instance is also stored in the `o0HardLinkedTarget` property to avoid
+    #    it being freed while the pointer exists.
+    if oTarget_sxData_or_u0Address is None or isinstance(oTarget_sxData_or_u0Address, int):
+      uAddress = oTarget_sxData_or_u0Address or 0;
     else:
-      if isinstance(oTarget_sString_or_u0Address, (str, bytes)):
+      if isinstance(oTarget_sxData_or_u0Address, (str, bytes)):
+        sxData = oTarget_sxData_or_u0Address;
         # Create a copy of the (byte) string as a buffer (an array of bytes/characters), including a 0 terminator. Then
         # use that buffer as if it was provided as the target: save it in the `o0HardLinkedTarget` property and use its
         # address for the pointer.
         cCharacterType = oSelf.__class__.c0TargetClass;
         assert issubclass(cCharacterType, iCharacterBaseType), \
             "Cannot create a %s from %s, as it does not a pointer to a character type." % \
-            (oSelf.__class__.sName, repr(oTarget_sString_or_u0Address));
-        oSelf.o0HardLinkedTarget = cCharacterType.foCreateBufferFromString(oTarget_sString_or_u0Address);
+            (oSelf.__class__.sName, repr(sxData));
+        oSelf.o0HardLinkedTarget = cCharacterType.foCreateString(sxData);
       else:
-        assert isinstance(oTarget_sString_or_u0Address, iBaseType), \
-            "Cannot create a pointer from %s." % (repr(oTarget_sString_or_u0Address),)
-        oSelf.o0HardLinkedTarget = oTarget_sString_or_u0Address;
+        assert isinstance(oTarget_sxData_or_u0Address, iBaseType), \
+            "Cannot create a pointer from %s." % (repr(oTarget_sxData_or_u0Address),)
+        oSelf.o0HardLinkedTarget = oTarget_sxData_or_u0Address;
       # Do some sanity checks, only we are explicitly casting.
       if not bCast: # If we are not casting, we will do type checks
         c0PointerTargetType = oSelf.__class__.c0TargetClass;
@@ -123,21 +127,39 @@ class iPointerBaseType(iUnsignedIntegerBaseType):
   def fuGetTargetAddress(oSelf):
     return oSelf.fuGetValue();
   
-  def fsGetValue(oSelf, u0MaxLength = None):
-    mDebugOutput_HideInCallStack = True;
+  def fs0GetNullTerminatedString(oSelf, u0StartIndex = None, u0MaxSize = None):
+    # Look for a NULL terminated Unicode string.
     assert oSelf.__class__.c0TargetClass is not None and issubclass(oSelf.__class__.c0TargetClass, iCharacterBaseType), \
-        "Cannot get a string for %s" % oSelf.__class__.sName;
-    sData = "";
+        "Cannot get '\\0' terminated string value of %s: it is not an pointer to characters" % \
+        (repr(oSelf),);
+    # Read at most until the end of the buffer but stop if we encounter a '\0' before then.
+    sb0Value = oSelf.fsb0GetNullTerminatedString(u0StartIndex, u0MaxSize);
+    if sb0Value is None:
+      return None; # There is no NULL terminator!
+    s0Encoding = oSelf.__class__.c0TargetClass.s0UnicodeEncoding;
+    if s0Encoding is None:
+      return "".join(chr(uByte) for uByte in sb0Value);
+    else:
+      return sb0Value.decode(s0Encoding, "strict");
+  
+  def fsb0GetNullTerminatedString(oSelf, u0StartIndex = None, u0MaxSize = None):
+    # Look for a NULL terminated string.
+    assert issubclass(oSelf.__class__.c0TargetClass, iCharacterBaseType), \
+        "Cannot get '\\0' terminated string value of %s: it is not an array of characters, but of %s" % \
+        (oSelf.__class__.sName, oSelf.__class__.c0TargetClass.sName);
+    uCharSize = oSelf.__class__.c0TargetClass.fuGetSize();
+    uStartIndex = 0 if u0StartIndex is None else u0StartIndex;
+    # Read at most until the end of the buffer but stop if we encounter a '\0' before then.
+    sbValue = b"";
     uAddress = oSelf.fuGetTargetAddress();
-    while u0MaxLength is None or u0MaxLength > 0:
+    while u0MaxSize is None or len(sbValue) + uCharSize <= u0MaxSize:
       oChar = oSelf.__class__.c0TargetClass.from_address(uAddress);
-      if oChar.fuGetValue() == 0:
-        break;
-      sData += oChar.fsGetValue();
-      uAddress += oSelf.__class__.c0TargetClass.uCharSize;
-      if u0MaxLength is not None:
-        u0MaxLength -= 1;
-    return sData;
+      sbCharValue = oChar.fsbGetValue();
+      if all(uByte == 0 for uByte in sbCharValue):
+        return sbValue;
+      sbValue += sbCharValue;
+      uAddress += uCharSize;
+    return None; # No NULL terminator found.
   
   def foCastTo(oSelf, cNewType):
     mDebugOutput_HideInCallStack = True;
