@@ -9,11 +9,12 @@ class iStructureOrUnionBaseType(iBaseType):
   @classmethod
   def fcCreateClass(iStructureOrUnionType, s0Name, *axFields):
     global guNamelessStructureOrUnionsCounter;
-    if s0Name:
-      sName = s0Name;
-    else:
+    bUnnamed = s0Name is None;
+    if bUnnamed:
       guNamelessStructureOrUnionsCounter += 1;
-      sName = "unnamed_%d" % guNamelessStructureOrUnionsCounter;
+      sTypeName = "unnamed_%d" % guNamelessStructureOrUnionsCounter;
+    else:
+      sTypeName = s0Name;
     asAnonymousFieldNames = [];
     atxFields = [];
     for xField in axFields:
@@ -22,7 +23,7 @@ class iStructureOrUnionBaseType(iBaseType):
           # (TYPE, NAME, SIZE IN BITS[, NAME, SIZE IN BITS[, ...]])
           cFieldClass = xField[0];
           assert issubclass(cFieldClass, iBaseType), \
-              "FieldType for %s must be a type, not %s" % (sName, repr(cFieldClass));
+              "FieldType for %s must be a type, not %s" % (sTypeName, repr(cFieldClass));
           for uIndex in range(1, len(xField), 2):
             s0FieldName = xField[uIndex];
             if s0FieldName is None:
@@ -32,9 +33,9 @@ class iStructureOrUnionBaseType(iBaseType):
               sFieldName = s0FieldName;
             uFieldSizeInBits = xField[uIndex + 1];
             assert isinstance(sFieldName, str), \
-                "FieldName for %s must be a string, not %s" % (sName, repr(sFieldName));
+                "FieldName for %s must be a string, not %s" % (sTypeName, repr(sFieldName));
             assert isinstance(uFieldSizeInBits, int) and uFieldSizeInBits > 0, \
-                "uFieldSizeInBits for %s must be a positive integer larger than zero, not %s" % (sName, repr(uFieldSizeInBits));
+                "uFieldSizeInBits for %s must be a positive integer larger than zero, not %s" % (sTypeName, repr(uFieldSizeInBits));
             atxFields.append((sFieldName, cFieldClass, uFieldSizeInBits));
           continue;
         cFieldClass, sFieldName = xField;
@@ -53,16 +54,17 @@ class iStructureOrUnionBaseType(iBaseType):
         }[cFieldClass.__class__][iStructureOrUnionType.uAlignmentInBits];
         cFieldClass = iFieldType.fcCreateClass(None, *cFieldClass.axFields);
       assert isinstance(sFieldName, str), \
-          "FieldName for %s must be a string, not %s (in %s)" % (sName, repr(sFieldName), repr(xField));
+          "FieldName for %s must be a string, not %s (in %s)" % (sTypeName, repr(sFieldName), repr(xField));
       assert inspect.isclass(cFieldClass) and issubclass(cFieldClass, iBaseType), \
           "FieldType for %s.%s must be derived from iBaseType but %s is not %s(in %s)" % \
-          (sName, sFieldName, repr(cFieldClass), repr(xField));
+          (sTypeName, sFieldName, repr(cFieldClass), repr(xField));
       atxFields.append((sFieldName, cFieldClass));
     
-    cStructureOrUnion = type(sName, (iStructureOrUnionType,), {
+    cStructureOrUnion = type(sTypeName, (iStructureOrUnionType,), {
       "_anonymous_": asAnonymousFieldNames,
       "_fields_": atxFields,
-      "sName": sName,
+      "sName": sTypeName,
+      "bUnnamed": bUnnamed,
     });
     
     return cStructureOrUnion;
@@ -71,32 +73,58 @@ class iStructureOrUnionBaseType(iBaseType):
   def fuGetOffsetOfMember(cSelf, sFieldName):
     return getattr(cSelf, sFieldName).offset;
   
-  def fasDump(oSelf, s0Name = None, uOffset = 0, sPadding = "", bOutputHeader = True):
+  def fasDump(oSelf,
+    s0Name = None,
+    uOffset = 0,
+    sPadding = "",
+    sPaddingLastLine = "",
+    bOutputHeader = True,
+  ):
     sName = s0Name if s0Name is not None else "@ 0x%X" % (oSelf.fuGetAddress(),);
+    if oSelf.bUnnamed:
+      sTypeName = "STRUCT" if oSelf.bIsStructure else "UNION";
+    else:
+      sTypeName = oSelf.__class__.sName;
     return  (
       (_fasGetDumpHeader() if bOutputHeader else []) +
       [_fsFormatDumpLine(
         uOffset = uOffset,
         u0Size = oSelf.__class__.fuGetSize(),
         sPadding = sPadding,
-        sType = oSelf.__class__.sName,
+        sType = sTypeName,
         sName = sName,
         sComment =  "// %d bits aligned" % oSelf.__class__.uAlignmentInBits,
       )] +
-      oSelf.fasDumpContent(uOffset, sPadding) +
+      oSelf.fasDumpContent(
+        uOffset = uOffset,
+        sPadding = sPadding,
+        sPaddingLastLine = sPaddingLastLine,
+      ) +
       (_fasGetDumpFooter() if bOutputHeader else [])
     );
   
-  def fasDumpContent(oSelf, uOffset = 0, sPadding = ""):
+  def fasDumpContent(oSelf,
+    uOffset = 0,
+    sPadding = "",
+    sPaddingLastLine = "",
+  ):
     asDumpData = [];
     for uMemberIndex in range(len(oSelf._fields_)):
       xMember = oSelf._fields_[uMemberIndex];
+      bIsLastMember = uMemberIndex == len(oSelf._fields_) - 1;
       sIndentedPadding = sPadding + "╵ ";
+      sIndentedPaddingLastLine = (sPaddingLastLine + "└ ") if bIsLastMember else sIndentedPadding;
       if len(xMember) == 2:
         (sMemberName, cMemberType) = xMember;
         oMember = getattr(oSelf, sMemberName);
         uMemberOffset = uOffset + oSelf.__class__.fuGetOffsetOfMember(sMemberName);
-        asDumpData += oMember.fasDump(sMemberName, uMemberOffset, sIndentedPadding, bOutputHeader = False);
+        asDumpData += oMember.fasDump(
+          s0Name = "" if sMemberName in oSelf._anonymous_ else sMemberName,
+          uOffset = uMemberOffset,
+          sPadding = sIndentedPadding,
+          sPaddingLastLine = sIndentedPaddingLastLine,
+          bOutputHeader = False,
+        );
       else:
         (sMemberName, cMemberType, uMemberBits) = xMember;
         cBitFieldType = getattr(oSelf.__class__, sMemberName);
@@ -106,9 +134,9 @@ class iStructureOrUnionBaseType(iBaseType):
           uOffset = uOffset + oSelf.fuGetOffsetOfMember(sMemberName),
           u0BitsOffset = uMemberBitsOffset,
           u0BitsSize = uMemberBits,
-          sPadding = sIndentedPadding,
+          sPadding = sIndentedPaddingLastLine,
           sType = "bitfield",
-          sName = sMemberName,
+          sName = "" if sMemberName in oSelf._anonymous_ else sMemberName,
           sComment = "value = %s" % oMember.fsDumpValue()
         ));
     return asDumpData;

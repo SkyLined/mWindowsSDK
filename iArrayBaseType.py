@@ -201,12 +201,15 @@ class iArrayBaseType(iBaseType, ctypes.Array, metaclass=type("iArrayMetaType", (
                   "%d chars (not terminated)" % uMaxCharacterCount
     );
   
-  def fasDump(oSelf, s0Name = None, uOffset = 0, sPadding = "", bOutputHeader = True):
+  def fasDump(oSelf,
+    s0Name = None,
+    uOffset = 0,
+    sPadding = "",
+    sPaddingLastLine = "",
+    bOutputHeader = True,
+  ):
     sName = s0Name if s0Name is not None else "%s @ 0x%X" % (oSelf.__class__.sName, oSelf.fuGetAddress());
     cElementClass = oSelf.__class__.cElementClass;
-    sElementTypeName = cElementClass.sName;
-    uElementCount = oSelf.__class__.uElementCount;
-    sElementCount = "%d" % uElementCount if uElementCount < 10 else "%d / 0x%X" % (uElementCount, uElementCount);
     if issubclass(cElementClass, iCharacterBaseType):
       sComment = oSelf.fsDumpValue();
     else:
@@ -221,16 +224,27 @@ class iArrayBaseType(iBaseType, ctypes.Array, metaclass=type("iArrayMetaType", (
         sName = sName,
         sComment = sComment,
       )] +
-      oSelf.fasDumpValues(sName, uOffset, sPadding) +
+      oSelf.fasDumpValues(
+        sName = sName,
+        uOffset = uOffset,
+        sPadding = sPadding,
+        sPaddingLastLine = sPaddingLastLine,
+      ) +
       (_fasGetDumpFooter() if bOutputHeader else [])
     );
   
-  def fasDumpValues(oSelf, sName, uOffset = 0, sPadding = ""):
+  def fasDumpValues(oSelf,
+    sName,
+    uOffset = 0,
+    sPadding = "",
+    sPaddingLastLine = "",
+  ):
     cElementClass = oSelf.__class__.cElementClass;
     sElementTypeName = cElementClass.sName;
     uElementCount = oSelf.__class__.uElementCount;
     uElementSize = cElementClass.fuGetSize();
     asDumpLines = [];
+    sIndentedPadding = sPadding + "╵ ";
     if issubclass(cElementClass, iCharacterBaseType):
       # array of chars can be dumped in blocks
       uBlockLength = int(16 / uElementSize);
@@ -244,20 +258,29 @@ class iArrayBaseType(iBaseType, ctypes.Array, metaclass=type("iArrayMetaType", (
           auBlockBytes += oElement.fauGetBytes();
           uCharCode = oElement.fuGetValue();
           sBlockChars += chr(uCharCode) if 0x20 <= uCharCode < 0x100 else "."
+        bIsLastLine = uBlockIndex >= uElementCount - uBlockLength;
         asDumpLines.append(_fsFormatDumpLine(
           uOffset = uOffset + (uBlockIndex * uElementSize),
           a0uBytes = auBlockBytes,
-          sPadding = sPadding + ("╵ " if uBlockIndex < uElementCount - uBlockLength else "╰ "),
+          sPadding = (sPaddingLastLine + "╰ ") if bIsLastLine else sIndentedPadding,
           sType = sElementTypeName,
           sName = "%s[%d ... %s]" % (sName, uBlockIndex, uBlockIndex + len(sBlockChars)),
           sComment = sBlockChars,
         ));
     else:
       for uElementIndex in range(uElementCount):
+        bIsLastLine = uElementIndex == uElementCount - 1;
+        sIndentedPaddingLastLine = (sPaddingLastLine + "╰ ") if bIsLastLine else sIndentedPadding;
         oElement = oSelf[uElementIndex];
         sElementsIndex = "%d" % uElementIndex if uElementIndex < 10 else "%d / 0x%X" % (uElementIndex, uElementIndex);
         sElementName = "%s[%s]" % (sName, sElementsIndex);
-        asDumpLines += oElement.fasDump(sElementName, uOffset, sPadding + "╵ ", bOutputHeader = False);
+        asDumpLines += oElement.fasDump(
+          s0Name = sElementName,
+          uOffset = uOffset,
+          sPadding = sIndentedPadding,
+          sPaddingLastLine = sIndentedPaddingLastLine,
+          bOutputHeader = False,
+        );
         uOffset += uElementSize;
     return asDumpLines;
   

@@ -40,7 +40,13 @@ class iPrimitiveBaseType(iBaseType, metaclass=type("iPrimitiveMetaType", (tCreat
       asFlags.append("0x%X" % uUnknownFlags);
     return " | ".join(asFlags);   
   
-  def fasDump(oSelf, s0Name = None, uOffset = 0, sPadding = "", bOutputHeader = True):
+  def fasDump(oSelf,
+    s0Name = None,
+    uOffset = 0,
+    sPadding = "", # This returns only one line, which is the last, so this argument is never used
+    sPaddingLastLine = "",
+    bOutputHeader = True,
+  ):
     sName = s0Name if s0Name is not None else "%s @ 0x%X" % (oSelf.__class__.sName, oSelf.fuGetAddress());
     return  (
       (_fasGetDumpHeader() if bOutputHeader else []) +
@@ -48,7 +54,7 @@ class iPrimitiveBaseType(iBaseType, metaclass=type("iPrimitiveMetaType", (tCreat
         uOffset = uOffset,
         u0Size = oSelf.__class__.fuGetSize(),
         a0uBytes = oSelf.fauGetBytes(),
-        sPadding = sPadding,
+        sPadding = sPaddingLastLine,
         sType = oSelf.__class__.sName,
         sName = sName,
         sComment = oSelf.fsDumpValue(),
