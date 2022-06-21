@@ -56,8 +56,8 @@ class iStructureOrUnionBaseType(iBaseType):
       assert isinstance(sFieldName, str), \
           "FieldName for %s must be a string, not %s (in %s)" % (sTypeName, repr(sFieldName), repr(xField));
       assert inspect.isclass(cFieldClass) and issubclass(cFieldClass, iBaseType), \
-          "FieldType for %s.%s must be derived from iBaseType but %s is not %s(in %s)" % \
-          (sTypeName, sFieldName, repr(cFieldClass), repr(xField));
+          "FieldType for %s.%s must be derived from iBaseType but %s is %s (in %s)" % \
+          (sTypeName, sFieldName, repr(cFieldClass), repr(type(cFieldClass)), repr(xField));
       atxFields.append((sFieldName, cFieldClass));
     
     cStructureOrUnion = type(sTypeName, (iStructureOrUnionType,), {
