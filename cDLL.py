@@ -174,4 +174,4 @@ class cDLL(object):
     return oDLLFunction is not None;
   
   def __repr__(oSelf):
-    return "<cDLL %s>" % os.path.basename(sDLLFilePath);
+    return "<cDLL %s>" % os.path.basename(oSelf.__sDLLFilePath);
