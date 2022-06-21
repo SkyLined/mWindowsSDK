@@ -1,4 +1,5 @@
-import ctypes;
+import ctypes
+from ctypes.wintypes import LPWSTR, ULONG;
 from .mPointerTypes import iPointerType32, iPointerType64, iPointerType;
 from .mStructureTypes import iStructureType32, iStructureType64, iStructureType;
 from .mUnionTypes import iUnionType32, iUnionType64, iUnionType;
@@ -438,6 +439,19 @@ fExportStructure("PROCESSENTRY32W",
   (WCHAR[MAX_PATH], "szExeFile"),
 );
 #RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
+fExportStructure("REASON_CONTEXT", # https://docs.microsoft.com/en-us/windows/win32/api/minwinbase/ns-minwinbase-reason_context
+  (ULONG,        "Version"),
+  (DWORD,        "Flags"),
+  UNION(
+    STRUCT(
+      (HMODULE, "LocalizedReasonModule"),
+      (ULONG,   "LocalizedReasonId"),
+      (ULONG,   "ReasonStringCount"),
+      (LPWSTR[1], "ReasonStrings"), # Any number of them.
+    ),
+    (LPWSTR,      "SimpleReasonString"),
+  ),
+);
 fExportStructure("RECT",
   (LONG,        "left"),
   (LONG,        "top"),

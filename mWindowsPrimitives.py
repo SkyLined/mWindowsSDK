@@ -15,6 +15,8 @@ from .mPointerClasses import \
     cVoidPointer32, cVoidPointer64, cVoidPointer;
 from .uProcessBits import uProcessBits;
 
+enum = cUnsignedInteger; # Size depends on the architecture.
+
 dx0BaseType_by_sName = {
   #AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
   "ASTR":     cCharacterA, # Used to create LPASTR etc.
@@ -72,7 +74,7 @@ dx0BaseType_by_sName = {
   "INT32":    cSignedInteger32,
   "INT64":    cSignedInteger64,
   #JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ
-  "JOBOBJECTINFOCLASS": cUnsignedInteger, # defined as an enum, so I'm guessing its size depends on the architecture.
+  "JOBOBJECTINFOCLASS": enum,
   #LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
   "LONG":     cSignedInteger32,
   "LONG_PTR": cSignedInteger,
@@ -82,9 +84,10 @@ dx0BaseType_by_sName = {
   "NTSTATUS": cSignedInteger32,
   #OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
   #PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
-  "PROCESSINFOCLASS": cUnsignedInteger, # defined as an enum, so I'm guessing its size depends on the architecture.
+  "PROCESSINFOCLASS": enum,
   "POINTER_32": cVoidPointer32,
   "POINTER_64": cVoidPointer64,
+  "POWER_REQUEST_TYPE": enum,
   #SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
   "SHORT":    cSignedInteger16,
   "SIZE_T":   cUnsignedInteger,
@@ -92,7 +95,7 @@ dx0BaseType_by_sName = {
   "SIZE_T64": cUnsignedInteger64,
   "STR":      cCharacterA, # Used to create LPSTR etc.
   #TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-  "THREADINFOCLASS": cUnsignedInteger, # defined as an enum, so I'm guessing its size depends on the architecture.
+  "THREADINFOCLASS": enum,
   "TOKEN_INFORMATION_CLASS": cUnsignedInteger32,
   #UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
   "UCHAR":    cUnsignedInteger8,

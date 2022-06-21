@@ -224,6 +224,18 @@ def foLoadKernel32DLL():
           "xReturnType": BOOL,
           "txArgumentTypes": (HANDLE, DWORD, PHANDLE),
         },
+        "PowerClearRequest": {
+          "xReturnType": BOOL,
+          "txArgumentTypes": (HANDLE, POWER_REQUEST_TYPE),
+        },
+        "PowerCreateRequest": {
+          "xReturnType": HANDLE,
+          "txArgumentTypes": (PREASON_CONTEXT),
+        },
+        "PowerSetRequest": {
+          "xReturnType": BOOL,
+          "txArgumentTypes": (HANDLE, POWER_REQUEST_TYPE),
+        },
         "Process32First": {
           "xReturnType": BOOL,
           "txArgumentTypes": (HANDLE, LPPROCESSENTRY32A),
