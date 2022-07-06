@@ -17,6 +17,10 @@ def foLoadPsapiDLL():
           "xReturnType": DWORD,
           "txArgumentTypes": (HANDLE, HMODULE, LPWSTR, DWORD),
         },
+        "EnumProcessModulesEx": {
+          "xReturnType": BOOL,
+          "txArgumentTypes": (HANDLE, PHMODULE, DWORD, LPDWORD, DWORD),
+        },
       },
     );
   return goPsapiDLL;
