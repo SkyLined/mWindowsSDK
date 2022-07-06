@@ -1,5 +1,5 @@
-from ..mWindowsPrimitives import __all__ as asWindowsPrimitiveNames;
-from ..mWindowsPrimitives import *;
+from ..mWindowsPrimitiveTypes import __all__ as asWindowsPrimitiveNames;
+from ..mWindowsPrimitiveTypes import *;
 __all__ = asWindowsPrimitiveNames[:];
 
 def fExportPrimitive(sName, xBaseType):

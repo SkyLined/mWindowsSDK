@@ -1,6 +1,9 @@
-from ..mWindowsPrimitives import __all__ as asWindowsPrimitiveNames;
-from ..mWindowsPrimitives import *;
+from ..mWindowsPrimitiveTypes import __all__ as asWindowsPrimitiveNames;
+from ..mWindowsPrimitiveTypes import *;
 __all__ = asWindowsPrimitiveNames[:];
+
+from ..mWindowsPrimitiveTypes import \
+    PVOID;
 
 def fExportPrimitive(sName, xBaseType):
   cType = type(sName, (xBaseType,), {"sName": sName});
@@ -9,8 +12,4 @@ def fExportPrimitive(sName, xBaseType):
 
 # Add additional primitives here using fExportPrimitive:
 # Source for these is internet searches, nothing reliable.
-fExportPrimitive("HDC", HANDLE);
-fExportPrimitive("D3DDDI_VIDEO_PRESENT_SOURCE_ID", UINT);
-fExportPrimitive("D3DGPU_VIRTUAL_ADDRESS", ULONGLONG);
-fExportPrimitive("D3DKMT_HANDLE", UINT);
-fExportPrimitive("D3DKMT_CLIENTHINT", UINT);
+fExportPrimitive("HINTERNET", PVOID);

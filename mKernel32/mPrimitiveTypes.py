@@ -1,5 +1,5 @@
-from ..mWindowsPrimitives import __all__ as asWindowsPrimitiveNames;
-from ..mWindowsPrimitives import *;
+from ..mWindowsPrimitiveTypes import __all__ as asWindowsPrimitiveNames;
+from ..mWindowsPrimitiveTypes import *;
 __all__ = asWindowsPrimitiveNames[:];
 
 def fExportPrimitive(sName, xBaseType):
@@ -8,5 +8,3 @@ def fExportPrimitive(sName, xBaseType):
   __all__.append(sName); # Make it available as an export from this module.
 
 # Add additional primitives here using fExportPrimitive:
-# Source for these is internet searches, nothing reliable.
-fExportPrimitive("HINTERNET", PVOID);

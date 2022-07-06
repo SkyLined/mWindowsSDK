@@ -1,6 +1,8 @@
 from .cDLL import cDLL;
-from .mWindowsPrimitives import *;
-from .mWindowsStructures import *;
+from .mWindowsPrimitiveTypes import \
+    BOOL, DWORD, HWND, LPCWSTR;
+from .mWindowsStructures import \
+    PWINDOWPLACEMENT, PDISPLAY_DEVICEA, PDISPLAY_DEVICEW;
 
 goUser32DLL = None;
 def foLoadUser32DLL():

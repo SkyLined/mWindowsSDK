@@ -1,12 +1,21 @@
-import ctypes
-from ctypes.wintypes import LPWSTR, ULONG;
-from .mPointerTypes import iPointerType32, iPointerType64, iPointerType;
 from .mStructureTypes import iStructureType32, iStructureType64, iStructureType;
-from .mUnionTypes import iUnionType32, iUnionType64, iUnionType;
+from .mUnionTypes import iUnionType;
 from .STRUCT import STRUCT;
 from .UNION import UNION;
-from .mWindowsConstants import *;
-from .mWindowsPrimitives import *;
+from .mWindowsConstants import \
+  MAX_MODULE_NAME32, MAX_PATH;
+from .mWindowsPrimitiveTypes import \
+  BOOL, BYTE, \
+  CHAR, \
+  DWORD, DWORD64, DWORD_PTR, \
+  HANDLE, HANDLE32, HANDLE64, HMODULE, HRESULT, \
+  INT32, \
+  LONG, LONGLONG, LPBYTE, LPSTR, LPVOID, LPWSTR, \
+  NTSTATUS, \
+  PBYTE, P32ULONG, P64ULONG, P32VOID, P64VOID, P32WSTR, P64WSTR, PULONG, PVOID, \
+  SHORT, SIZE_T, SIZE_T32, SIZE_T64, \
+  UINT, UINT16, UINT32, ULONG, ULONGLONG, USHORT, \
+  WCHAR, WORD;
 
 __all__ = [];
 

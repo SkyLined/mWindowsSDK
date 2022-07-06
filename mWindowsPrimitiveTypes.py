@@ -2,18 +2,15 @@ import ctypes;
 from .mCharacterClasses import \
   cCharacterA, cCharacterW;
 from .mBooleanClasses import \
-    cBoolean8, cBoolean16, cBoolean32, cBoolean64, cBoolean;
+    cBoolean8, cBoolean32;
 from .mSignedIntegerClasses import \
     cSignedInteger8, cSignedInteger16, cSignedInteger32, cSignedInteger64, cSignedInteger;
 from .mUnsignedIntegerClasses import \
     cUnsignedInteger8, cUnsignedInteger16, cUnsignedInteger32, cUnsignedInteger64, cUnsignedInteger;
 from .mFloatingPointClasses import \
-    cFloatingPoint32, cFloatingPoint64;
-from .mPointerTypes import \
-    iPointerType32, iPointerType64, iPointerType;
+    cFloatingPoint32;
 from .mPointerClasses import \
     cVoidPointer32, cVoidPointer64, cVoidPointer;
-from .uProcessBits import uProcessBits;
 
 enum = cUnsignedInteger; # Size depends on the architecture.
 
@@ -123,13 +120,13 @@ def fExport(sName, xValue):
   globals()[sName] = xValue; # Make it available in the context of this file
   __all__.append(sName); # Make it available as an export from this module.
 
-def fExportPointers(sName, c0BaseType, cPointerType, cTargetPointer32, cTargetPointer64):
+def fExportPointers(sName, c0BaseType, cPointerType, cPointerType32, cPointerType64):
   fExport("P%s" % sName,   cPointerType);
   fExport("LP%s" % sName,  cPointerType);
   fExport("PP%s" % sName,  cPointerType.fcCreatePointer());
   # We also explicitly define 32-bit and 64-bit pointer-to-types
-  fExport("P32%s" % sName, cTargetPointer32);
-  fExport("P64%s" % sName, cTargetPointer64);
+  fExport("P32%s" % sName, cPointerType32);
+  fExport("P64%s" % sName, cPointerType64);
   # For types based on a pointer, we explicitly export 32- and 64-bit versions.
   if c0BaseType is cVoidPointer:
     fExport(sName + "32", type(sName + "32", (cVoidPointer32,), {"sName": sName + "32"}));
@@ -140,31 +137,34 @@ dsBaseTypeName_by_sName = {};
 for (sName, x0BaseType) in dx0BaseType_by_sName.items():
   if isinstance(x0BaseType, str):
     dsBaseTypeName_by_sName[sName] = x0BaseType;
-    continue;
-  c0BaseType = x0BaseType;
-  if x0BaseType is None:
-    # The type "VOID" does not exist, but void pointers do (e.g. "PVOID")
-    cPointerType = cVoidPointer;
-    cTargetPointer32 = cVoidPointer32;
-    cTargetPointer64 = cVoidPointer64;
   else:
-    cType = type(sName, (c0BaseType,), {"sName": sName});
-    fExport(sName, cType);
-    cPointerType = cType.fcCreatePointer();
-    cTargetPointer32 = cType.fcCreatePointer32();
-    cTargetPointer64 = cType.fcCreatePointer64();
-  fExportPointers(sName, c0BaseType, cPointerType, cTargetPointer32, cTargetPointer64);
+    c0BaseType = x0BaseType;
+    if x0BaseType is None:
+      # The type "VOID" does not exist, but void pointers do (e.g. "PVOID")
+      cPointerType = cVoidPointer;
+      cPointerType32 = cVoidPointer32;
+      cPointerType64 = cVoidPointer64;
+    else:
+      cType = type(sName, (c0BaseType,), {"sName": sName});
+      fExport(sName, cType);
+      cPointerType = cType.fcCreatePointer();
+      cPointerType32 = cType.fcCreatePointer32();
+      cPointerType64 = cType.fcCreatePointer64();
+    fExportPointers(sName, c0BaseType, cPointerType, cPointerType32, cPointerType64);
 
 while dsBaseTypeName_by_sName:
   dsUnprocessedBaseTypeName_by_sName = {};
   for (sName, sBaseName) in dsBaseTypeName_by_sName.items():
     if sBaseName not in globals():
       dsUnprocessedBaseTypeName_by_sName[sName] = sBaseName;
-      continue;
-    c0BaseType = globals()[sBaseName];
-    cType = type(sName, (c0BaseType,), {"sName": sName});
-    fExport(sName, cType);
-    fExportPointers(sName, c0BaseType, cPointerType, cTargetPointer32, cTargetPointer64);
+    else:
+      c0BaseType = globals()[sBaseName];
+      cType = type(sName, (c0BaseType,), {"sName": sName});
+      fExport(sName, cType);
+      cPointerType = cType.fcCreatePointer();
+      cPointerType32 = cType.fcCreatePointer32();
+      cPointerType64 = cType.fcCreatePointer64();
+      fExportPointers(sName, c0BaseType, cPointerType, cPointerType32, cPointerType64);
   assert len(dsUnprocessedBaseTypeName_by_sName) < len(dsBaseTypeName_by_sName), \
       "cyclic dependencies in: %s" % ", ".join(
         "%s=>%s" % (sName, sBaseName)

@@ -1,8 +1,7 @@
 from ..mStructureTypes import iStructureType;
-from ..STRUCT import STRUCT;
-from ..UNION import UNION;
 from .mConstants import *;
-from .mPrimitives import *;
+from .mPrimitiveTypes import \
+  BYTE, WORD, DWORD, PVOID;
 
 from ..mWindowsStructures import __all__ as asWindowsStructureNames;
 from ..mWindowsStructures import *;

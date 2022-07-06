@@ -1,6 +1,8 @@
 from ..cDLL import cDLL;
-from .mPrimitives import *;
-from .mStructures import *;
+from .mPrimitiveTypes import \
+    BOOL, DWORD, HINTERNET, LPCWSTR;
+from .mStructures import \
+    PWINHTTP_AUTOPROXY_OPTIONS, PWINHTTP_PROXY_INFO;
 
 def foLoadWinHTTPDLL():
   return cDLL(

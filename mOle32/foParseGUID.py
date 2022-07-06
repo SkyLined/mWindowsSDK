@@ -1,6 +1,6 @@
 import re;
 
-from .mPrimitives import BYTE;
+from .mPrimitiveTypes import BYTE;
 from .mStructures import GUID;
 
 rGUID = re.compile((

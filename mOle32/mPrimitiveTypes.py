@@ -1,6 +1,9 @@
-from ..mWindowsPrimitives import __all__ as asWindowsPrimitiveNames;
-from ..mWindowsPrimitives import *;
+from ..mWindowsPrimitiveTypes import __all__ as asWindowsPrimitiveNames;
+from ..mWindowsPrimitiveTypes import *;
 __all__ = asWindowsPrimitiveNames[:];
+
+from ..mWindowsPrimitiveTypes import \
+    PWCHAR, SIZE_T;
 
 def fExportPrimitive(sName, xBaseType):
   cType = type(sName, (xBaseType,), {"sName": sName});

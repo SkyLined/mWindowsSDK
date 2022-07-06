@@ -1,8 +1,23 @@
 from ..mStructureTypes import iStructureType;
 from ..STRUCT import STRUCT;
 from ..UNION import UNION;
-from .mConstants import *;
-from .mPrimitives import *;
+from .mConstants import \
+    CCHDEVICENAME, \
+    CCHFORMNAME;
+from .mPrimitiveTypes import \
+    BYTE, \
+    D3DDDI_VIDEO_PRESENT_SOURCE_ID, \
+    D3DGPU_VIRTUAL_ADDRESS, \
+    D3DKMT_HANDLE, \
+    D3DKMT_CLIENTHINT, \
+    DWORD, \
+    HDC, \
+    PVOID, \
+    SHORT, \
+    UINT, \
+    WCHAR, WORD;
+from ..mWindowsStructures import \
+    POINTL;
 
 from ..mWindowsStructures import __all__ as asWindowsStructureNames;
 from ..mWindowsStructures import *;

@@ -1,6 +1,7 @@
 from .cDLL import cDLL;
-from .mWindowsPrimitives import *;
-from .mWindowsStructures import *;
+from .mWindowsPrimitiveTypes import \
+    BOOL, DWORD, HANDLE, LPVOID, PDWORD, PUCHAR, TOKEN_INFORMATION_CLASS;
+from .mWindowsStructures import PSID;
 
 goAdvAPI32DLL = None;
 def foLoadAdvAPI32DLL():

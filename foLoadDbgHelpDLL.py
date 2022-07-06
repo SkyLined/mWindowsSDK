@@ -1,6 +1,6 @@
 from .cDLL import cDLL;
-from .mWindowsPrimitives import *;
-from .mWindowsStructures import *;
+from .mWindowsPrimitiveTypes import \
+  DWORD, PCSTR, PCWSTR, PSTR, PWSTR;
 
 goDbgHelpDLL = None;
 def foLoadDbgHelpDLL():

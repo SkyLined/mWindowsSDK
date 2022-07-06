@@ -1,8 +1,6 @@
 from ..cDLL import cDLL;
-from .mConstants import *;
-from .mPrimitives import *;
-from .mStructures import *;
-from ..uProcessBits import uProcessBits;
+from .mPrimitiveTypes import \
+    BOOL, DWORD, HANDLE, HMODULE, LPDWORD, LPSTR, LPWSTR, PHMODULE;
 
 goPsapiDLL = None;
 def foLoadPsapiDLL():

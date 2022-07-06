@@ -123,7 +123,7 @@ __all__ = [
   # Windows specific stuff
   "mWindowsConstants",
   "mWindowsMacros",
-  "mWindowsPrimitives",
+  "mWindowsPrimitiveTypes",
   "mWindowsStructures",
   # Windows DLL loaders
   "foLoadAdvAPI32DLL",
@@ -141,7 +141,7 @@ __all__ = [
   "fsGetExceptionDescription",
 ];
 dsSourceModuleName_by_sExportName = {};
-for sModuleName in ("mWindowsConstants", "mWindowsMacros", "mWindowsPrimitives", "mWindowsStructures"):
+for sModuleName in ("mWindowsConstants", "mWindowsMacros", "mWindowsPrimitiveTypes", "mWindowsStructures"):
   mModule = importlib.import_module(".%s" % sModuleName, "mWindowsSDK");
   globals()[sModuleName] = mModule;
   __all__.append(sModuleName);

@@ -1,6 +1,8 @@
 from ..cDLL import cDLL;
-from .mPrimitives import *;
-from .mStructures import *;
+from .mPrimitiveTypes import \
+    DWORD, HRESULT, LPCOLESTR, LPOLESTR, LPVOID;
+from .mStructures import \
+    LPCLSID, LPUNKNOWN, REFCLSID, REFIID;
 
 def foLoadOle32DLL():
   return cDLL(

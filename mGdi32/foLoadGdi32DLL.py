@@ -1,6 +1,9 @@
 from ..cDLL import cDLL;
-from .mPrimitives import *;
-from .mStructures import *;
+from .mPrimitiveTypes import \
+    HDC, LPCSTR, NTSTATUS;
+from .mStructures import \
+    PD3DKMT_CREATECONTEXT, PD3DKMT_CREATEDEVICE, PD3DKMT_OPENADAPTERFROMHDC, \
+    PDEVMODEA, PDEVMODEW;
 
 def foLoadGdi32DLL():
   return cDLL(

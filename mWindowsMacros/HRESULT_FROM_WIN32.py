@@ -1,4 +1,4 @@
-from ..mWindowsPrimitives import HRESULT;
+from ..mWindowsPrimitiveTypes import HRESULT;
 
 def HRESULT_FROM_WIN32(uWin32):
   if uWin32 == 0: return HRESULT(0);

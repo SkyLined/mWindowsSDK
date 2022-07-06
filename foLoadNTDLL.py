@@ -1,6 +1,6 @@
 from .cDLL import cDLL;
-from .mWindowsPrimitives import *;
-from .mWindowsStructures import *;
+from .mWindowsPrimitiveTypes import \
+  HANDLE, NTSTATUS, PROCESSINFOCLASS, PULONG, PVOID, THREADINFOCLASS, ULONG;
 
 goNTDLL = None;
 def foLoadNTDLL():
