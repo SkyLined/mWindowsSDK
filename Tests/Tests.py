@@ -38,7 +38,10 @@ except:
       pass;
 
 try:
-  from mWindowsSDK import *;
+  from mWindowsSDK import \
+    NT_ERROR, \
+    NT_SUCCESS, \
+    STATUS_SUCCESS;
   from fTestCharacterTypes import fTestCharacterTypes;
   from fTestIntegerTypes import fTestIntegerTypes;
   from fTestGdi32 import fTestGdi32;
