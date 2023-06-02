@@ -4,13 +4,6 @@ def fTestDependencies(bAutomaticallyUpdate = False):
   import json, os, sys;
   # Save the list of names of default loaded modules:
   asInitiallyLoadedModuleNames = list(sys.modules.keys());
-  try:
-    from ..mStandardExitCodes import guExitCodeInternalError;
-  except ImportError:
-    try:
-      from mStandardExitCodes import guExitCodeInternalError;
-    except ImportError:
-      raise AssertionError("Your application does not have a mStandardExitCodes module with standard error codes defined!");
   
   # Augment the search path to make the test subject a package and have access to its modules folder.
   sTestsFolderPath = os.path.dirname(os.path.abspath(__file__));
@@ -18,6 +11,9 @@ def fTestDependencies(bAutomaticallyUpdate = False):
   sParentFolderPath = os.path.dirname(sMainFolderPath);
   sModulesFolderPath = os.path.join(sMainFolderPath, "modules");
   asOriginalSysPath = sys.path[:];
+  # Load test standard error codes
+  sys.path = [sTestsFolderPath];
+  from mStandardExitCodes import guExitCodeInternalError;
   # Load mDebugOutput if available to improve error output
   sys.path = [sModulesFolderPath];
   try:
