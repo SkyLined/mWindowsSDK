@@ -11,8 +11,9 @@ def fTestDependencies(bAutomaticallyUpdate = False):
   sParentFolderPath = os.path.dirname(sMainFolderPath);
   sModulesFolderPath = os.path.join(sMainFolderPath, "modules");
   asOriginalSysPath = sys.path[:];
-  # Load test standard error codes
-  sys.path = [sTestsFolderPath];
+  # Load test standard error codes. For modules these are in the Tests sub-folder,
+  # for scripts these are in the main folder.
+  sys.path = [sTestsFolderPath, sMainFolderPath];
   from mStandardExitCodes import guExitCodeInternalError;
   # Load mDebugOutput if available to improve error output
   sys.path = [sModulesFolderPath];
