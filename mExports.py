@@ -48,7 +48,6 @@ from .cDLL import cDLL;
 from .foLoadAdvAPI32DLL import foLoadAdvAPI32DLL;
 from .foLoadDbgHelpDLL import foLoadDbgHelpDLL;
 from .foLoadNTDLL import foLoadNTDLL;
-from .foLoadUser32DLL import foLoadUser32DLL;
 
 from .fs0GetHResultDefineName import fs0GetHResultDefineName;
 from .fsGetHResultDescription import fsGetHResultDescription;
@@ -129,7 +128,6 @@ __all__ = [
   "foLoadAdvAPI32DLL",
   "foLoadDbgHelpDLL",
   "foLoadNTDLL",
-  "foLoadUser32DLL",
   
   "fs0GetHResultDefineName",
   "fsGetHResultDescription",

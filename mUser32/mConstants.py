@@ -1,0 +1,75 @@
+from ..mWindowsConstants import __all__ as asWindowsConstantName;
+from ..mWindowsConstants import *;
+
+__all__ = asWindowsConstantName[:];
+asNotToBeExported = list(globals().keys());
+
+# https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-systemparametersinfoa
+SPI_GETACCESSTIMEOUT            = 0x003C;
+SPI_GETAUDIODESCRIPTION         = 0x0074;
+SPI_GETCLIENTAREAANIMATION      = 0x1042;
+SPI_GETDISABLEOVERLAPPEDCONTENT = 0x1040;
+SPI_GETFILTERKEYS               = 0x0032;
+SPI_GETFOCUSBORDERHEIGHT        = 0x2010;
+SPI_GETFOCUSBORDERWIDTH         = 0x200E;
+SPI_GETHIGHCONTRAST             = 0x0042;
+SPI_GETLOGICALDPIOVERRIDE       = 0x009E;
+SPI_GETMESSAGEDURATION          = 0x2016;
+SPI_GETMOUSECLICKLOCK           = 0x101E;
+SPI_GETMOUSECLICKLOCKTIME       = 0x2008;
+SPI_GETMOUSEKEYS                = 0x0036;
+SPI_GETMOUSESONAR               = 0x101C;
+SPI_GETMOUSEVANISH              = 0x1020;
+SPI_GETSCREENREADER             = 0x0046;
+SPI_GETSERIALKEYS               = 0x003E;
+SPI_GETSHOWSOUNDS               = 0x0038;
+SPI_GETSOUNDSENTRY              = 0x0040;
+SPI_GETSTICKYKEYS               = 0x003A;
+SPI_GETTOGGLEKEYS               = 0x0034;
+SPI_SETACCESSTIMEOUT            = 0x003D;
+SPI_SETAUDIODESCRIPTION         = 0x0075;
+SPI_SETCLIENTAREAANIMATION      = 0x1043;
+SPI_SETDISABLEOVERLAPPEDCONTENT = 0x1041;
+SPI_SETFILTERKEYS               = 0x0033;
+SPI_SETFOCUSBORDERHEIGHT        = 0x2011;
+SPI_SETFOCUSBORDERWIDTH         = 0x200F;
+SPI_SETHIGHCONTRAST             = 0x0043;
+SPI_SETLOGICALDPIOVERRIDE       = 0x009F;
+SPI_SETMESSAGEDURATION          = 0x2017;
+SPI_SETMOUSECLICKLOCK           = 0x101F;
+SPI_SETMOUSECLICKLOCKTIME       = 0x2009;
+SPI_SETMOUSEKEYS                = 0x0037;
+SPI_SETMOUSESONAR               = 0x101D;
+SPI_SETMOUSEVANISH              = 0x1021;
+SPI_SETSCREENREADER             = 0x0047;
+SPI_SETSERIALKEYS               = 0x003F;
+SPI_SETSHOWSOUNDS               = 0x0039;
+SPI_SETSOUNDSENTRY              = 0x0041;
+SPI_SETSTICKYKEYS               = 0x003B;
+SPI_SETTOGGLEKEYS               = 0x0035;
+SPI_GETCLEARTYPE                = 0x1048;
+SPI_GETDESKWALLPAPER            = 0x0073;
+SPI_GETDROPSHADOW               = 0x1024;
+SPI_GETFLATMENU                 = 0x1022;
+SPI_GETFONTSMOOTHING            = 0x004A;
+SPI_GETFONTSMOOTHINGCONTRAST    = 0x200C;
+SPI_GETFONTSMOOTHINGORIENTATION = 0x2012;
+SPI_GETFONTSMOOTHINGTYPE        = 0x200A;
+SPI_GETWORKAREA                 = 0x0030;
+SPI_SETCLEARTYPE                = 0x1049;
+SPI_SETCURSORS                  = 0x0057;
+SPI_SETDESKPATTERN              = 0x0015;
+SPI_SETDESKWALLPAPER            = 0x0014;
+SPI_SETDROPSHADOW               = 0x1025;
+SPI_SETFLATMENU                 = 0x1023;
+SPI_SETFONTSMOOTHING            = 0x004B;
+SPI_SETFONTSMOOTHINGCONTRAST    = 0x200D;
+SPI_SETFONTSMOOTHINGORIENTATION = 0x2013;
+SPI_SETFONTSMOOTHINGTYPE        = 0x200B;
+SPI_SETWORKAREA                 = 0x002F;
+
+SPIF_UPDATEINIFILE              = 0x01;
+SPIF_SENDWININICHANGE           = 0x02;
+
+# Make sure everything we defined in this file is exported:
+__all__ += [sName for sName in globals().keys()if sName not in asNotToBeExported];

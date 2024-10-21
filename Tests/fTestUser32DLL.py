@@ -1,8 +1,7 @@
 ﻿from mWindowsSDK import *;
 
 def fTestUser32DLL(oConsole):
-  from mWindowsSDK import foLoadUser32DLL;
-  oUser32DLL = foLoadUser32DLL();
+  from mWindowsSDK.mUser32 import oUser32DLL;
   oDisplayDevice = DISPLAY_DEVICEA();
   # oDisplayDevice.fClear();
   oDisplayDevice.cb = oDisplayDevice.fuGetSize();
